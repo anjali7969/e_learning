@@ -1,3 +1,5 @@
+import 'package:e_learning/screens/auth/login.dart';
+import 'package:e_learning/screens/auth/register.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -27,8 +29,11 @@ class SplashScreen extends StatelessWidget {
             right: 40,
             child: GestureDetector(
               onTap: () {
-                Navigator.pushReplacementNamed(
-                    context, '/loginPage'); // Navigate to login page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RegisterPage()),
+                );
+                // Navigate to login page
               },
               child: Stack(
                 alignment: Alignment.center,

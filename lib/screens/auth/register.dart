@@ -1,7 +1,8 @@
+import 'package:e_learning/screens/auth/account_created.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,13 +13,13 @@ class LoginPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 70),
+            const SizedBox(height: 50),
 
             // Logo
             Center(
               child: Image.asset(
                 'assets/images/logo.png',
-                height: 170,
+                height: 100,
               ),
             ),
 
@@ -27,40 +28,62 @@ class LoginPage extends StatelessWidget {
             // Title
             const Center(
               child: Text(
-                'Sign in to your account',
+                'Create Your Account',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
             ),
 
+            const SizedBox(height: 30),
+
+            // Full Name Fields
+            Row(
+              children: [
+                Expanded(
+                  child: _buildTextField(label: 'First Name'),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildTextField(label: 'Last Name'),
+                ),
+              ],
+            ),
+
             const SizedBox(height: 20),
 
-            // Email Input Field
-            _buildTextField(label: 'Email', hintText: 'Username or Email ID'),
+            // Email Field
+            _buildTextField(label: 'Email ID'),
 
             const SizedBox(height: 20),
 
-            // Password Input Field
-            _buildTextField(
-                label: 'Password',
-                hintText: 'Enter Password',
-                isPassword: true),
+            // Password Field
+            _buildTextField(label: 'Enter Password', isPassword: true),
 
             const SizedBox(height: 20),
 
-            // Sign In Button
+            // Confirm Password Field
+            _buildTextField(label: 'Confirm Password', isPassword: true),
+
+            const SizedBox(height: 30),
+
+            // Create Account Button
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Handle sign-in action
+                  // Navigate to the "Account Created" page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AccountCreatedPage()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   backgroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32.0, vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -69,29 +92,26 @@ class LoginPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Sign In',
+                      'Create Account',
                       style: TextStyle(color: Colors.white),
                     ),
-                    SizedBox(width: 8),
-                    Icon(
-                      Icons.arrow_forward,
-                      color: Colors.white,
-                    ),
+                    SizedBox(width: 10),
+                    Icon(Icons.arrow_forward, color: Colors.white),
                   ],
                 ),
               ),
             ),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 20),
 
-            // Divider with "Sign in with"
+            // Divider with "Sign up with"
             const Row(
               children: [
                 Expanded(child: Divider(color: Colors.grey)),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    'Sign in with',
+                    'Sign up with',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -132,15 +152,11 @@ class LoginPage extends StatelessWidget {
   }
 
   // Reusable TextField Widget
-  Widget _buildTextField(
-      {required String label,
-      required String hintText,
-      bool isPassword = false}) {
+  Widget _buildTextField({required String label, bool isPassword = false}) {
     return TextField(
       obscureText: isPassword,
       decoration: InputDecoration(
         labelText: label,
-        hintText: hintText,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
