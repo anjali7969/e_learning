@@ -8,21 +8,35 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set the background color
       body: Stack(
         children: [
+          // Gradient background
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF81D4FA), // Light blue
+                  Color(0xFFFFFFFF), // White
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+
           // Logo at the top
           Positioned(
-            top: 100,
+            top: 150,
             left: 0,
             right: 0,
             child: Center(
               child: Image.asset(
                 'assets/images/logo.png', // Path to your logo
-                height: 210.0, // Adjust the size of the logo
+                height: 220.0, // Adjust the size of the logo
               ),
             ),
           ),
+
           // Circular button at bottom-right
           Positioned(
             bottom: 55,
@@ -31,23 +45,35 @@ class SplashScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const RegisterPage()),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                 );
-                // Navigate to login page
               },
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Static circular outline
+                  // Outer circular gradient outline
                   Container(
                     height: 90,
                     width: 90,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Outline color
-                        width: 3, // Thickness of the border
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black,
+                          Colors.blue,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
+                    ),
+                  ),
+                  // Inner white circle
+                  Container(
+                    height: 80,
+                    width: 80,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
                     ),
                   ),
                   // Inner button with shadow
@@ -59,7 +85,7 @@ class SplashScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black26,
+                          color: Colors.black12,
                           blurRadius: 6,
                           offset: Offset(0, 3), // Shadow position
                         ),
@@ -81,4 +107,4 @@ class SplashScreen extends StatelessWidget {
 }
 
 //auth
-// this is a page 
+// this is a page
