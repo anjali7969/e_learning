@@ -9,8 +9,13 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(title: const Text('Home Page')),
       body: const Center(
         child: Text(
-          'Welcome to the Home Page!',
-          style: TextStyle(fontSize: 24),
+          'Welcome to the Home Page! \n Anjali',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+          textAlign: TextAlign.center,
         ),
       ),
     );
