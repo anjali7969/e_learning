@@ -1,4 +1,4 @@
-import 'package:e_learning/screens/auth/splash_screen.dart';
+import 'package:e_learning/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {

@@ -1,5 +1,5 @@
-import 'package:e_learning/screens/auth/login.dart';
-import 'package:e_learning/screens/auth/register.dart';
+import 'package:e_learning/screens/login.dart';
+import 'package:e_learning/screens/register.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {

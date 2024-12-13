@@ -1,4 +1,4 @@
-import 'package:e_learning/screens/auth/account_created.dart';
+import 'package:e_learning/screens/account_created.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {

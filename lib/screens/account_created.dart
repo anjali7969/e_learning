@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:e_learning/screens/auth/login.dart';
+import 'package:e_learning/screens/login.dart';
 
 class AccountCreatedPage extends StatelessWidget {
   const AccountCreatedPage({super.key});
