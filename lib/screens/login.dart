@@ -1,3 +1,5 @@
+import 'package:e_learning/screens/admin_dashboard.dart';
+import 'package:e_learning/screens/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:e_learning/screens/register.dart';
 
@@ -46,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                 Center(
                   child: Image.asset(
                     'assets/images/logo.png',
-                    height: 170,
+                    height: 180,
                   ),
                 ),
 
@@ -55,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                 // Title
                 const Center(
                   child: Text(
-                    'Sign in to your account',
+                    'SIGN IN',
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 20,
@@ -65,8 +67,22 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
 
+                // Text after Sign In
+                const Center(
+                  child: Text(
+                    'Sign in to access your personalized\n learning journey',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      color: Colors.black54,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
                 // Email Input Field
                 _buildTextField(
                   controller: _emailController,
@@ -182,7 +198,8 @@ class _LoginPageState extends State<LoginPage> {
                       // Navigate to Sign Up Page
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage()),
                       );
                     },
                     child: RichText(
@@ -252,6 +269,16 @@ class _LoginPageState extends State<LoginPage> {
       _passwordError = null;
     });
 
+    // Allow admin credentials to bypass validation
+    if (email == 'admin' && password == 'admin') {
+      // Navigate to DashboardPage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const AdminDashboard()),
+      );
+      return;
+    }
+
     // Email Validation (checks for @gmail.com domain)
     if (!RegExp(r'^[a-zA-Z0-9._%+-]+@gmail\.com$').hasMatch(email)) {
       setState(() {
@@ -270,30 +297,30 @@ class _LoginPageState extends State<LoginPage> {
     if (_emailError != null || _passwordError != null) {
       _showErrorDialog();
     } else {
-      // Proceed with sign-in logic
-      // For now, we'll just print success
-      print('Form is valid!');
+      // Navigate to HomePage for regular users
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
     }
   }
 
-  // Show an error dialog
+  // Show an error dialog if validation fails
   void _showErrorDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: const Text('Please fix the errors and try again.'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+      builder: (context) => AlertDialog(
+        title: const Text('Validation Error'),
+        content: const Text('Please fix the errors and try again.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -65,18 +65,33 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
 
                   // Title
                   const Center(
                     child: Text(
-                      'Create Your Account',
+                      'SIGN UP',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 25,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // Text below the title
+                  const Center(
+                    child: Text(
+                      'Create your account to embark on your \neducational adventure',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Poppins',
+                        color: Colors.black54,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
 
@@ -154,14 +169,27 @@ class _RegisterPageState extends State<RegisterPage> {
                   // Create Account Button
                   GestureDetector(
                     onTap: () {
-                      // Handle button click, e.g., navigate to registration screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const AccountCreatedPage(), // Replace with your registration screen
-                        ),
-                      );
+                      // Check if email and password are valid before navigating
+                      if (_isEmailValid(email) && _isPasswordValid(password)) {
+                        // Proceed with account creation or next screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AccountCreatedPage(),
+                          ),
+                        );
+                      } else {
+                        // Show error message if validation fails
+                        setState(() {
+                          if (!_isEmailValid(email)) {
+                            emailError = 'Please enter a valid Gmail address.';
+                          }
+                          if (!_isPasswordValid(password)) {
+                            passwordError =
+                                'Password must be at least 8 characters.';
+                          }
+                        });
+                      }
                     },
                     child: Container(
                       width: double.infinity,
@@ -176,7 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       child: const Center(
                         child: Text(
-                          'Create Account',
+                          'SIGN UP',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -184,7 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

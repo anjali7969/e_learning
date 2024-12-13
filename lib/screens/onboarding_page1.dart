@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:e_learning/screens/onboarding_page2.dart';
+import 'package:e_learning/screens/onboarding_page3.dart'; // Import OnboardingPage3
+import '../widgets/dot_indicator.dart';
 
 class OnboardingPage1 extends StatelessWidget {
   const OnboardingPage1({super.key});
@@ -23,36 +26,29 @@ class OnboardingPage1 extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Image of a computer screen with people
               Image.asset(
                 'assets/images/onboarding4.png', // Replace with your image path
                 height: 300,
               ),
-
               const SizedBox(height: 20),
-
               const Text(
                 'Enter the World of E-Learning',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
-
               const SizedBox(height: 10),
-
               const Text(
                 'Begin Your Educational Journey With\nAccess To A Diverse Range Of Courses.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
-
               const SizedBox(height: 30),
-
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -61,63 +57,69 @@ class OnboardingPage1 extends StatelessWidget {
                   DotIndicator(),
                 ],
               ),
-
               const SizedBox(height: 40),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Skip button
                   TextButton(
                     onPressed: () {
-                      // Implement skip button logic here
+                      // Skip to last page (OnboardingPage3)
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const OnboardingPage3(),
+                        ),
+                      );
                     },
                     child: const Text(
                       'SKIP',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
-
-                  // Continue button
-                  ElevatedButton(
-                    onPressed: () {
-                      // Implement continue button logic here
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF3498DB),
+                          Color.fromARGB(255, 37, 75, 101)
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
                       ),
                     ),
-                    child: const Text('CONTINUE'),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const OnboardingPage2(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.white,
+                        elevation: 0, // Remove default elevation
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 25,
+                        ),
+                      ),
+                      child: const Text('CONTINUE'),
+                    ),
                   ),
                 ],
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class DotIndicator extends StatelessWidget {
-  const DotIndicator({super.key, this.isActive = false});
-
-  final bool isActive;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 8,
-      height: 8,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: isActive ? Colors.white : Colors.grey,
       ),
     );
   }

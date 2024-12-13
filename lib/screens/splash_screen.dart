@@ -1,4 +1,5 @@
 import 'package:e_learning/screens/login.dart';
+import 'package:e_learning/screens/onboarding_page1.dart';
 import 'package:e_learning/screens/register.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +46,8 @@ class SplashScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const OnboardingPage1()),
                 );
               },
               child: Stack(

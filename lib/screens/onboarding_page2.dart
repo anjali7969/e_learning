@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:e_learning/screens/onboarding_page3.dart';
+import '../widgets/dot_indicator.dart';
 
 class OnboardingPage2 extends StatelessWidget {
   const OnboardingPage2({super.key});
@@ -8,113 +10,114 @@ class OnboardingPage2 extends StatelessWidget {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-                'assets/images/background_image.png'), // Replace with your actual image path
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Image of people learning together
-              Image.asset(
-                'assets/images/onboarding5.png', // Replace with your image path
-                height: 300,
-              ),
-
-              const SizedBox(height: 20),
-
-              const Text(
-                'Embark on Your Learning Adventure',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              const Text(
-                'Explore Interactive Lessons, Quizzes, And Multimedia Content To Enhance Your Understanding.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const DotIndicator(),
-                  const DotIndicator(isActive: true),
-                  const DotIndicator(),
-                ],
-              ),
-
-              const SizedBox(height: 40),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Skip button
-                  TextButton(
-                    onPressed: () {
-                      // Implement skip button logic here
-                    },
-                    child: const Text(
-                      'SKIP',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-
-                  // Continue button
-                  ElevatedButton(
-                    onPressed: () {
-                      // Implement continue button logic here
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text('CONTINUE'),
-                  ),
-                ],
-              ),
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF81D4FA), // Light blue
+              Color(0xFFFFFFFF), // White
             ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
-      ),
-    );
-  }
-}
-
-class DotIndicator extends StatelessWidget {
-  const DotIndicator({super.key, this.isActive = false});
-
-  final bool isActive;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 8,
-      height: 8,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: isActive ? Colors.white : Colors.grey,
+        child: Center(
+          // Center all child widgets
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Adjust height to content
+              crossAxisAlignment:
+                  CrossAxisAlignment.center, // Center horizontally
+              children: [
+                Image.asset(
+                  'assets/images/onboarding5.png', // Replace with your image path
+                  height: 300,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Embark on Your Learning Adventure',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center, // Ensure proper text alignment
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Explore Interactive Lessons, Quizzes, And Multimedia Content To Enhance Your Understanding.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 30),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    DotIndicator(),
+                    DotIndicator(isActive: true),
+                    DotIndicator(),
+                  ],
+                ),
+                const SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        // Skip to last page (not yet implemented)
+                      },
+                      child: const Text(
+                        'SKIP',
+                        style: TextStyle(
+                          color: Colors.black,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF3498DB),
+                            Color.fromARGB(255, 37, 75, 101)
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const OnboardingPage3(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          elevation: 0, // Remove default elevation
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 25,
+                          ),
+                        ),
+                        child: const Text('CONTINUE'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
