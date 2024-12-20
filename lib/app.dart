@@ -1,4 +1,4 @@
-import 'package:e_learning/screens/splash_screen.dart';
+import 'package:e_learning/screens/homepage.dart';
 import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
       ),
 
-      home: const SplashScreen(),
+      home: const HomePage(),
       // Set the initial route
       // initialRoute: '/',
       // // Define the route mapping
