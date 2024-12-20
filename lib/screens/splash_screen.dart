@@ -10,6 +10,7 @@ class SplashScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+          ///
           // Gradient background
           Container(
             decoration: const BoxDecoration(
