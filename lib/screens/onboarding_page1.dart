@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:e_learning/screens/onboarding_page2.dart';
 import 'package:e_learning/screens/onboarding_page3.dart'; // Import OnboardingPage3
+import 'package:flutter/material.dart';
+
 import '../widgets/dot_indicator.dart';
 
 class OnboardingPage1 extends StatelessWidget {
@@ -71,13 +72,6 @@ class OnboardingPage1 extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text(
-                      'SKIP',
-                      style: TextStyle(
-                        color: Colors.black,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
                   ),
                   Container(
                     decoration: BoxDecoration(

@@ -4,27 +4,17 @@ ThemeData getApplicationTheme() {
   return ThemeData(
     appBarTheme: const AppBarTheme(
       centerTitle: true,
-      color: Colors.white,
+      color: Color(0xFF0A3D62), // Slightly dark blue color
       elevation: 3,
       shadowColor: Colors.black,
-      toolbarHeight: 60, // Standard AppBar height
       titleTextStyle: TextStyle(
         fontSize: 18,
-        color: Colors.black,
-        fontFamily: 'Montserrat',
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
       ),
-      titleSpacing: 0, // Space for the logo
-      actionsIconTheme: IconThemeData(color: Colors.black),
+      iconTheme: IconThemeData(color: Colors.white),
     ),
-    primarySwatch: Colors.blue,
-    scaffoldBackgroundColor: Colors.grey[200],
+    scaffoldBackgroundColor: Colors.white,
     fontFamily: 'Montserrat',
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        textStyle: const TextStyle(fontSize: 14),
-        backgroundColor: const Color(0xFF0A3D62),
-        foregroundColor: Colors.white,
-      ),
-    ),
   );
 }

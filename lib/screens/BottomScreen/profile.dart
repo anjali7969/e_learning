@@ -1,6 +1,6 @@
+import 'package:e_learning/screens/BottomScreen/edit_profile_screen.dart';
+import 'package:e_learning/screens/login.dart';
 import 'package:flutter/material.dart';
-
-import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -9,25 +9,26 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A3D62), // Dark blue background
+        toolbarHeight: 80, // Increased AppBar height
+        backgroundColor: Colors.white, // Consistent dark blue
         title: Row(
           children: [
             Image.asset(
               'assets/images/logo.png', // Replace with the correct logo path
-              height: 30,
+              height: 100, // Updated logo size
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             const Text(
-              "Profile",
+              "",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ],
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        centerTitle: false, // Title aligned left with logo
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -55,30 +56,15 @@ class ProfileScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "S3-s1-C33C",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
                             "Anjali Shrestha",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(height: 8),
                           Text(
-                            "220385@softwarica.edu.np",
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
-                          ),
-                          Text(
                             "softwarica",
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
-                          ),
-                          Text(
-                            "13701745",
                             style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
                         ],
@@ -139,6 +125,36 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.support_agent,
               title: "Support Staffs",
               subtitle: "Request here to get support",
+            ),
+            const _ProfileOption(
+              icon: Icons.settings,
+              title: "Settings",
+              subtitle: "Update password and details here",
+            ),
+
+            // Logout Option
+            ListTile(
+              leading: const Icon(
+                Icons.logout,
+                color: Colors.red,
+                size: 30,
+              ),
+              title: const Text(
+                "Logout",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              subtitle: const Text("Logout your account from device"),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginPage(),
+                  ),
+                );
+              },
             ),
           ],
         ),

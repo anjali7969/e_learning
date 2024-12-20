@@ -14,10 +14,10 @@ class BottomNavigationView extends StatefulWidget {
 class BottomNavigationViewState extends State<BottomNavigationView> {
   int selectedIndex = 0;
 
-  List<Widget> lstBottomScreen = [
+  final List<Widget> lstBottomScreen = [
     const HomeScreen(),
     const LearningScreen(),
-    const NoticeScreen(), //PascalCase
+    const NoticeScreen(),
     const ProfileScreen(),
   ];
 
@@ -33,11 +33,11 @@ class BottomNavigationViewState extends State<BottomNavigationView> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school), // Updated to represent Learning
+            icon: Icon(Icons.school),
             label: 'Learning',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications), // Updated to represent Notice
+            icon: Icon(Icons.notifications),
             label: 'Notice',
           ),
           BottomNavigationBarItem(
