@@ -20,7 +20,7 @@ class NoticeScreen extends StatelessWidget {
         author: "Tech Club",
         description:
             "Join us for an in-depth workshop on Flutter App Development on January 5, 2025. Learn how to build cross-platform applications with hands-on activities.",
-        timestamp: "19 Dec 2024 - 03:30 PM",
+        timestamp: "19 Dec 2024 - 03:00 PM",
       ),
       Notice(
         title: "Library Renovation Notice",

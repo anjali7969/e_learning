@@ -181,6 +181,7 @@ class _ProfileOption extends StatelessWidget {
       leading: Icon(
         icon,
         color: const Color(0xFF0A3D62), // Dark blue
+
         size: 30,
       ),
       title: Text(
