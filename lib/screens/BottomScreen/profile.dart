@@ -45,11 +45,11 @@ class ProfileScreen extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage(
-                          'assets/images/user_photo.png'), // Replace with user photo
-                    ),
+                    // const CircleAvatar(
+                    //   radius: 40,
+                    //   backgroundImage: AssetImage(
+                    //       'assets/images/user_photo.png'), // Replace with user photo
+                    // ),
                     const SizedBox(width: 16),
                     const Expanded(
                       child: Column(
