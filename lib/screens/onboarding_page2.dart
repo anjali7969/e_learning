@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:e_learning/screens/onboarding_page3.dart';
+import 'package:flutter/material.dart';
+
 import '../widgets/dot_indicator.dart';
 
 class OnboardingPage2 extends StatelessWidget {
@@ -61,58 +62,41 @@ class OnboardingPage2 extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        // Skip to last page (not yet implemented)
-                      },
-                      child: const Text(
-                        'SKIP',
-                        style: TextStyle(
-                          color: Colors.black,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF3498DB),
+                        Color.fromARGB(255, 37, 75, 101)
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
                     ),
-                    Container(
-                      decoration: BoxDecoration(
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const OnboardingPage3(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      elevation: 0, // Remove default elevation
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF3498DB),
-                            Color.fromARGB(255, 37, 75, 101)
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
                       ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const OnboardingPage3(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          foregroundColor: Colors.white,
-                          elevation: 0, // Remove default elevation
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 25,
-                          ),
-                        ),
-                        child: const Text('CONTINUE'),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 25,
                       ),
                     ),
-                  ],
+                    child: const Text('CONTINUE'),
+                  ),
                 ),
               ],
             ),
