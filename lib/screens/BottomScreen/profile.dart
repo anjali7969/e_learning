@@ -81,7 +81,7 @@ class ProfileScreen extends StatelessWidget {
                       },
                       icon: const Icon(
                         Icons.edit,
-                        color: Color(0xFF0A3D62), // Same as AppBar color
+                        color: Color(0xFF0A3D62),
                       ),
                     ),
                   ],
