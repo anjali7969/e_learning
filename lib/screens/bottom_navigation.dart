@@ -1,3 +1,7 @@
+import 'package:e_learning/screens/BottomScreen/home.dart';
+import 'package:e_learning/screens/BottomScreen/learning.dart';
+import 'package:e_learning/screens/BottomScreen/notice.dart';
+import 'package:e_learning/screens/BottomScreen/profile.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavigationView extends StatefulWidget {
@@ -10,21 +14,16 @@ class BottomNavigationView extends StatefulWidget {
 class BottomNavigationViewState extends State<BottomNavigationView> {
   int selectedIndex = 0;
 
-  List<Widget> lstBottomScreen = [
-    // const HomeScreen(),
-    // const learningScreen(), //PascalCase
-    // const ProfileScreen(),
-    // const NoticeScreen(),
+  final List<Widget> lstBottomScreen = [
+    const HomeScreen(),
+    const LearningScreen(),
+    const NoticeScreen(),
+    const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        backgroundColor: Colors.blueAccent,
-        centerTitle: true,
-      ),
       body: lstBottomScreen[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -34,16 +33,16 @@ class BottomNavigationViewState extends State<BottomNavigationView> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school), // Updated to represent Learning
+            icon: Icon(Icons.school),
             label: 'Learning',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notice',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications), // Updated to represent Notice
-            label: 'Notice',
           ),
         ],
         currentIndex: selectedIndex,

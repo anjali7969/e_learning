@@ -1,6 +1,5 @@
-import 'package:e_learning/screens/login.dart';
 import 'package:e_learning/screens/onboarding_page1.dart';
-import 'package:e_learning/screens/register.dart';
+// import 'package:e_learning/screens/register.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -11,6 +10,7 @@ class SplashScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+          ///
           // Gradient background
           Container(
             decoration: const BoxDecoration(
