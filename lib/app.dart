@@ -1,5 +1,10 @@
+import 'package:e_learning/core/app_theme.dart';
 import 'package:e_learning/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -8,18 +13,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Poppins',
-      ),
-
+      theme: getApplicationTheme(), // Use the custom theme
       home: const SplashScreen(),
-      // Set the initial route
-      // initialRoute: '/',
-      // // Define the route mapping
-      // routes: {
-      //   '/': (context) => const StudentDetailsView(), // Default route
-      //   '/output': (context) => const StudentOutputView(),
-      // },
     );
   }
 }
