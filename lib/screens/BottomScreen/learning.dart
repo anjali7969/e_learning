@@ -29,7 +29,7 @@ class LearningScreen extends StatelessWidget {
               lessonsCompleted: "2/6",
               description:
                   "Learn to build and integrate Web APIs using modern tools.",
-              progress: 0.33,
+              progress: 0.44,
             ),
             LearningModuleCard(
               title: "STA309IAE Design Thinking and Innovation",

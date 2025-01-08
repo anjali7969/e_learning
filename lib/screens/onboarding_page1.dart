@@ -1,7 +1,7 @@
+import 'package:e_learning/screens/onboarding_page2.dart'; // Import the next page
 import 'package:flutter/material.dart';
-import 'package:e_learning/screens/onboarding_page2.dart';
-import 'package:e_learning/screens/onboarding_page3.dart'; // Import OnboardingPage3
-import '../widgets/dot_indicator.dart';
+
+import '../widgets/dot_indicator.dart'; // Import the DotIndicator widget
 
 class OnboardingPage1 extends StatelessWidget {
   const OnboardingPage1({super.key});
@@ -33,8 +33,9 @@ class OnboardingPage1 extends StatelessWidget {
               const SizedBox(height: 20),
               const Text(
                 'Enter the World of E-Learning',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -44,7 +45,7 @@ class OnboardingPage1 extends StatelessWidget {
                 'Begin Your Educational Journey With\nAccess To A Diverse Range Of Courses.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: Colors.black,
                 ),
               ),
@@ -58,64 +59,42 @@ class OnboardingPage1 extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      // Skip to last page (OnboardingPage3)
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const OnboardingPage3(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'SKIP',
-                      style: TextStyle(
-                        color: Colors.black,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
+              // Centered Continue Button
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF3498DB),
+                      Color.fromARGB(255, 37, 75, 101)
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
+                ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const OnboardingPage2(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    elevation: 0, // Remove default elevation
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFF3498DB),
-                          Color.fromARGB(255, 37, 75, 101)
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
                     ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const OnboardingPage2(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: Colors.white,
-                        elevation: 0, // Remove default elevation
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 25,
-                        ),
-                      ),
-                      child: const Text('CONTINUE'),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 25,
                     ),
                   ),
-                ],
+                  child: const Text('CONTINUE'),
+                ),
               ),
             ],
           ),
