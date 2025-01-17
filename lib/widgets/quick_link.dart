@@ -8,6 +8,7 @@ class QuickLink extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
+    required Color iconColor,
   });
 
   @override

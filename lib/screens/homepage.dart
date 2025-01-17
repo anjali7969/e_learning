@@ -1,4 +1,4 @@
-import 'package:e_learning/screens/bottom_navigation.dart';
+import 'package:e_learning/features/bottom_navigation/presentation/view/bottom_navigation_view.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {

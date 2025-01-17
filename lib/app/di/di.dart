@@ -1,48 +1,33 @@
+import 'package:e_learning/core/network/hive_service.dart';
+import 'package:e_learning/features/auth/presentation/view_model/login/login_bloc.dart';
+import 'package:e_learning/features/auth/presentation/view_model/signup/register_bloc.dart';
+import 'package:e_learning/features/splash/presentation/view_model/splash_cubit.dart';
 import 'package:get_it/get_it.dart';
-import 'package:softwarica_student_management_bloc/features/auth/presentation/view_model/login/login_bloc.dart';
-import 'package:softwarica_student_management_bloc/features/auth/presentation/view_model/signup/register_bloc.dart';
-import 'package:softwarica_student_management_bloc/features/batch/presentation/view_model/batch_bloc.dart';
-import 'package:softwarica_student_management_bloc/features/home/presentation/view_model/home_cubit.dart';
-import 'package:softwarica_student_management_bloc/features/splash/presentation/view_model/splash_cubit.dart';
 
 final getIt = GetIt.instance;
 
 Future<void> initDependencies() async {
-  await _initBatchDependencies();
-  await _initHomeDependencies();
-  await _initRegisterDependencies();
+  await _initHiveService();
+  await _initSplashDependencies();
+  await _initSignupDependencies();
   await _initLoginDependencies();
-  await _initSplashScreenDependencies();
 }
 
-_initBatchDependencies() async {
-  getIt.registerFactory<BatchBloc>(
-    () => BatchBloc(),
-  );
+_initHiveService() {
+  getIt.registerLazySingleton<HiveService>(() => HiveService());
 }
 
-_initHomeDependencies() async {
-  getIt.registerFactory<HomeCubit>(
-    () => HomeCubit(),
-  );
-}
-
-_initRegisterDependencies() async {
-  getIt.registerFactory<RegisterBloc>(
-    () => RegisterBloc(),
-  );
+_initSignupDependencies() async {
+  getIt.registerFactory<RegisterBloc>(() => RegisterBloc());
 }
 
 _initLoginDependencies() async {
   getIt.registerFactory<LoginBloc>(
-    () => LoginBloc(
-      registerBloc: getIt<RegisterBloc>(),
-      homeCubit: getIt<HomeCubit>(),
-    ),
+    () => LoginBloc(registerBloc: getIt<RegisterBloc>()),
   );
 }
 
-_initSplashScreenDependencies() async {
+_initSplashDependencies() async {
   getIt.registerFactory<SplashCubit>(
     () => SplashCubit(getIt<LoginBloc>()),
   );

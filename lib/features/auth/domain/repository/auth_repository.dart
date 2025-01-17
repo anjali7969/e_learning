@@ -1,7 +1,11 @@
+import 'package:dartz/dartz.dart';
+import 'package:e_learning/core/error/failure.dart';
 import 'package:e_learning/features/auth/domain/entity/auth_entity.dart';
 
-abstract class AuthRepository {
-  Future<void> saveUser(AuthEntity user);
-  AuthEntity? getUser();
-  Future<void> logout();
+abstract interface class IAuthRepository {
+  Future<Either<Failure, void>> registerUser(AuthEntity user);
+
+  Future<Either<Failure, String>> loginUser(String email, String password);
+
+  Future<Either<Failure, AuthEntity>> getCurrentUser();
 }
