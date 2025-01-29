@@ -8,7 +8,7 @@ class AuthLocalRepository implements IAuthRepository {
   final AuthLocalDataSource _authLocalDataSource;
 
   AuthLocalRepository(this._authLocalDataSource);
-
+//jhgsdzuc
   @override
   Future<Either<Failure, AuthEntity>> getCurrentUser() async {
     try {
