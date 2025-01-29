@@ -12,7 +12,7 @@ class HiveService {
     Hive.init(path);
 
     // Register Adapters
-    Hive.registerAdapter(AuthHiveModelAdapter());
+    // Hive.registerAdapter(AuthHiveModelAdapter());
   }
 
   // **Register User**
