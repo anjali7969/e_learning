@@ -230,9 +230,9 @@ _initSignupDependencies() async {
   );
 
   // init local repository
-  getIt.registerLazySingleton(
-    () => AuthLocalRepository(getIt<AuthLocalDataSource>()),
-  );
+  // getIt.registerLazySingleton(
+  //   () => AuthLocalRepository(getIt<AuthLocalDataSource>()),
+  // );
 
   //Remote data source
   getIt.registerFactory<AuthRemoteDataSource>(
@@ -280,6 +280,13 @@ _initLoginDependencies() async {
     getIt.registerLazySingleton<LoginStudentUsecase>(() =>
         LoginStudentUsecase(authRepository: getIt<AuthRemoteRepository>()));
   }
+
+  // getIt.registerLazySingleton<LoginStudentUsecase>(
+  //   () => LoginStudentUsecase(
+  //     getIt<authRemoteRepository>(),
+  //   ),
+  // );
+
   getIt.registerFactory<LoginBloc>(
     () => LoginBloc(
       registerBloc: getIt<RegisterBloc>(),

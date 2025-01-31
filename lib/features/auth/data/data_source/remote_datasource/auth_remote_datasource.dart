@@ -39,7 +39,8 @@ class AuthRemoteDataSource implements IAuthDataSource {
       );
 
       if (response.statusCode == 200) {
-        return response.data['token'];
+        final str = response.data['token'];
+        return str;
       } else {
         throw Exception('Failed to login: ${response.statusMessage}');
       }
@@ -66,7 +67,6 @@ class AuthRemoteDataSource implements IAuthDataSource {
     }
   }
 
-  @override
   Future<String> uploadProfilePicture(File file) async {
     try {
       String fileName = file.path.split('/').last;

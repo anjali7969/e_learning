@@ -38,8 +38,8 @@ class AuthRemoteRepository implements IAuthRepository {
       return Right(student);
     } catch (e) {
       return Left(
-        LocalDatabaseFailure(
-          message: 'Login failed: $e',
+        ApiFailure(
+          message: e.toString(),
         ),
       );
     }
@@ -48,7 +48,8 @@ class AuthRemoteRepository implements IAuthRepository {
   @override
   Future<Either<Failure, String>> uploadProfilePicture(File file) async {
     try {
-      return Right(await _authRemoteDatasource.uploadProfilePicture(file));
+      final imageName = await _authRemoteDatasource.uploadProfilePicture(file);
+      return Right(imageName);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));
     }

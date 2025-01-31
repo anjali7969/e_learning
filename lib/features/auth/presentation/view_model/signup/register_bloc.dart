@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:e_learning/core/common/snackbar/my_snackbar.dart';
 import 'package:e_learning/features/auth/domain/usecases/register_user_usecase.dart';
 import 'package:e_learning/features/auth/domain/usecases/upload_image_usecase.dart';
 import 'package:equatable/equatable.dart';
@@ -68,6 +69,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       (l) => emit(state.copyWith(isLoading: false, isSuccess: false)),
       (r) {
         emit(state.copyWith(isLoading: false, isSuccess: true));
+        showMySnackBar(
+            context: event.context, message: "Registration successful");
       },
     );
   }

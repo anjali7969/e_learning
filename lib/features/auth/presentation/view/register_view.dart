@@ -286,7 +286,7 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
-  final _formKey = GlobalKey<FormState>(); // ✅ Fixed Variable Name
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -314,8 +314,12 @@ class _RegisterViewState extends State<RegisterView> {
         setState(() {
           _img = File(image.path);
           // Send image to RegisterBloc
-          context.read<RegisterBloc>().add(LoadImage(file: _img!));
+          context.read<RegisterBloc>().add(
+                LoadImage(file: _img!),
+              );
         });
+      } else {
+        return;
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -347,85 +351,85 @@ class _RegisterViewState extends State<RegisterView> {
                 children: [
                   const SizedBox(height: 50),
 
-                  // Logo
-                  // Image.asset('assets/images/logo.png', height: 150),
-                  // const SizedBox(height: 20),
-
-                  // Profile Image Selection
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        backgroundColor: Colors.grey[300],
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
-                        ),
-                        builder: (context) => Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  _checkCameraPermission();
-                                  _browseImage(ImageSource.camera);
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(Icons.camera),
-                                label: const Text('Camera'),
-                              ),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  _browseImage(ImageSource.gallery);
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(Icons.image),
-                                label: const Text('Gallery'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    child: SizedBox(
-                      height: 120,
-                      width: 120,
-                      child: CircleAvatar(
-                        radius: 50,
+                  // Profile Image Selection with Camera Icon
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      CircleAvatar(
+                        radius: 75,
                         backgroundImage: _img != null
                             ? FileImage(_img!)
                             : const AssetImage('assets/images/profile.png')
                                 as ImageProvider,
                       ),
-                    ),
+                      InkWell(
+                        onTap: () {
+                          showModalBottomSheet(
+                            backgroundColor: Colors.grey[300],
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20),
+                              ),
+                            ),
+                            builder: (context) => Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      _checkCameraPermission();
+                                      _browseImage(ImageSource.camera);
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(Icons.camera),
+                                    label: const Text('Camera'),
+                                  ),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      _checkCameraPermission();
+                                      _browseImage(ImageSource.gallery);
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(Icons.image),
+                                    label: const Text('Gallery'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.black,
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
 
-                  // // Title
-                  // const Text(
-                  //   'SIGN UP',
-                  //   style: TextStyle(
-                  //     fontSize: 30,
-                  //     fontFamily: 'Poppins',
-                  //     fontWeight: FontWeight.bold,
-                  //     color: Colors.black,
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 10),
-
-                  // // Subtitle
-                  // const Text(
-                  //   'Create your account to embark on your \neducational adventure',
-                  //   textAlign: TextAlign.center,
-                  //   style: TextStyle(
-                  //       fontSize: 14,
-                  //       fontFamily: 'Poppins',
-                  //       color: Colors.black54),
-                  // ),
-                  // const SizedBox(height: 30),
+                  // Title
+                  const Text(
+                    'SIGN UP',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
 
                   // Form Fields
                   _buildTextField(nameController, "Your Name",
@@ -452,14 +456,6 @@ class _RegisterViewState extends State<RegisterView> {
                           end: Alignment.centerRight,
                         ),
                         borderRadius: BorderRadius.circular(8.0),
-                        // style: ElevatedButton.styleFrom(
-                        //   backgroundColor: Colors.transparent,
-                        //   shadowColor: Colors.transparent,
-                        //   padding: const EdgeInsets.symmetric(vertical: 15),
-                        //   shape: RoundedRectangleBorder(
-                        //     borderRadius: BorderRadius.circular(8.0),
-                        //   ),
-                        // ),
                       ),
                       child: ElevatedButton(
                         onPressed: () {
@@ -486,6 +482,14 @@ class _RegisterViewState extends State<RegisterView> {
                             );
                           }
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
                         child: const Text(
                           'SIGN UP',
                           style: TextStyle(
@@ -551,9 +555,12 @@ class _RegisterViewState extends State<RegisterView> {
     return TextFormField(
       controller: passwordController,
       obscureText: !_isPasswordVisible,
-      decoration: const InputDecoration(
-        prefixIcon: Icon(Icons.lock, size: 18, color: Colors.black),
+      decoration: InputDecoration(
+        prefixIcon: const Icon(Icons.lock, size: 18, color: Colors.black),
         labelText: "Password",
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
     );
   }
