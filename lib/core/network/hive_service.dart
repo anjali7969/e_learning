@@ -12,13 +12,13 @@ class HiveService {
     Hive.init(path);
 
     // Register Adapters
-    // Hive.registerAdapter(AuthHiveModelAdapter());
+    Hive.registerAdapter(AuthHiveModelAdapter());
   }
 
   // **Register User**
   Future<void> register(AuthHiveModel auth) async {
     var box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.userBox);
-    await box.put(auth.userId, auth);
+    await box.put(auth.studentId, auth);
   }
 
   // **Delete User by ID**
