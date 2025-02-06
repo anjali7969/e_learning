@@ -1,20 +1,27 @@
-// app/shared_prefs/token_shared_prefs.dart
+import 'package:dartz/dartz.dart';
+import 'package:e_learning/core/error/failure.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenSharedPrefs {
-  final SharedPreferences _prefs;
+  final SharedPreferences _sharedPreferences;
 
-  TokenSharedPrefs(this._prefs);
+  TokenSharedPrefs(this._sharedPreferences);
 
-  Future<void> saveToken(String token) async {
-    await _prefs.setString('auth_token', token);
+  Future<Either<Failure, void>> saveToken(String token) async {
+    try {
+      await _sharedPreferences.setString('token', token);
+      return const Right(null);
+    } catch (e) {
+      return Left(SharedPrefsFailure(message: e.toString()));
+    }
   }
 
-  String? getToken() {
-    return _prefs.getString('auth_token');
-  }
-
-  Future<void> clearToken() async {
-    await _prefs.remove('auth_token');
+  Future<Either<Failure, String>> getToken() async {
+    try {
+      final token = _sharedPreferences.getString('token');
+      return Right(token ?? '');
+    } catch (e) {
+      return Left(SharedPrefsFailure(message: e.toString()));
+    }
   }
 }

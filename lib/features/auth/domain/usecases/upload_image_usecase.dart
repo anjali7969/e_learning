@@ -20,6 +20,6 @@ class UploadImageUsecase
   UploadImageUsecase(this._repository);
   @override
   Future<Either<Failure, String>> call(UploadImageParams params) {
-    return _repository.uploadProfilePicture(params.file);
+    return _repository.uploadprofilePicture(params.file);
   }
 }

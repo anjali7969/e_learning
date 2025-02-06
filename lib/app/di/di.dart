@@ -189,6 +189,7 @@
 // }
 
 import 'package:dio/dio.dart';
+import 'package:e_learning/app/shared_prefs/token_shared_prefs.dart';
 import 'package:e_learning/core/network/api_service.dart';
 import 'package:e_learning/core/network/hive_service.dart';
 import 'package:e_learning/features/auth/data/data_source/local_datasource/auth_local_datasource.dart';
@@ -202,15 +203,23 @@ import 'package:e_learning/features/auth/presentation/view_model/login/login_blo
 import 'package:e_learning/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:e_learning/features/splash/presentation/view_model/splash_cubit.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
 
 Future<void> initDependencies() async {
   await _initHiveService();
   await _initApiService();
+  await _initSharedPreferences();
+
   await _initSignupDependencies();
   await _initLoginDependencies();
   await _initSplashDependencies();
+}
+
+Future<void> _initSharedPreferences() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 }
 
 _initApiService() {
@@ -246,7 +255,7 @@ _initSignupDependencies() async {
   getIt.registerLazySingleton<AuthRemoteRepository>(
       () => AuthRemoteRepository(getIt<AuthRemoteDataSource>()));
 
-  // register use usecase
+  // register use usecasec
   getIt.registerLazySingleton<RegisterUseCase>(
     () => RegisterUseCase(
       getIt<AuthRemoteRepository>(),
@@ -276,16 +285,16 @@ _initSignupDependencies() async {
 }
 
 _initLoginDependencies() async {
-  if (!getIt.isRegistered<LoginStudentUsecase>()) {
-    getIt.registerLazySingleton<LoginStudentUsecase>(() =>
-        LoginStudentUsecase(authRepository: getIt<AuthRemoteRepository>()));
-  }
+  getIt.registerLazySingleton<TokenSharedPrefs>(
+    () => TokenSharedPrefs(getIt<SharedPreferences>()),
+  );
 
-  // getIt.registerLazySingleton<LoginStudentUsecase>(
-  //   () => LoginStudentUsecase(
-  //     getIt<authRemoteRepository>(),
-  //   ),
-  // );
+  getIt.registerLazySingleton<LoginStudentUsecase>(
+    () => LoginStudentUsecase(
+      authRepository: getIt<AuthRemoteRepository>(),
+      tokenSharedPrefs: getIt<TokenSharedPrefs>(),
+    ),
+  );
 
   getIt.registerFactory<LoginBloc>(
     () => LoginBloc(

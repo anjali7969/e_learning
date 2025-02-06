@@ -67,7 +67,8 @@ class AuthRemoteDataSource implements IAuthDataSource {
     }
   }
 
-  Future<String> uploadProfilePicture(File file) async {
+  @override
+  Future<String> uploadprofilePicture(File file) async {
     try {
       String fileName = file.path.split('/').last;
       FormData formData = FormData.fromMap({

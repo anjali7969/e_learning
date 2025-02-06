@@ -511,7 +511,18 @@ class LoginView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: ElevatedButton(
-                              onPressed: () => login(context),
+                              onPressed: () {
+                                // Show success Snackbar before navigating
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Login Successfully!'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+
+                                // Call login function
+                                login(context);
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 shadowColor: Colors.transparent,
