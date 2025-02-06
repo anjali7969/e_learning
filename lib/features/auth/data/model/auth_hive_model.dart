@@ -9,59 +9,67 @@ part 'auth_hive_model.g.dart';
 @HiveType(typeId: HiveTableConstant.userTableId)
 class AuthHiveModel extends Equatable {
   @HiveField(0)
-  final String? userId;
+  final String? studentId;
   @HiveField(1)
   final String email;
   @HiveField(2)
-  final String fname;
+  final String name;
   @HiveField(3)
-  final String lname;
-  @HiveField(4)
-  final String password;
-  @HiveField(5)
   final String? image;
+  @HiveField(4)
+  final String phone;
+  @HiveField(5)
+  final String password;
 
   AuthHiveModel({
-    String? userId,
+    String? studentId,
     required this.email,
-    required this.fname,
-    required this.lname,
-    required this.password,
+    required this.name,
+    required this.phone,
     this.image,
-  }) : userId = userId ?? const Uuid().v4();
+    required this.password,
+  }) : studentId = studentId ?? const Uuid().v4();
 
   // Initial Constructor
   const AuthHiveModel.initial()
-      : userId = '',
+      : studentId = '',
         email = '',
-        fname = '',
-        lname = '',
-        password = '',
-        image = '';
+        name = '',
+        phone = '',
+        image = '',
+        password = '';
 
   // From Entity
   factory AuthHiveModel.fromEntity(AuthEntity entity) {
     return AuthHiveModel(
-      userId: entity.userId,
+      studentId: entity.userId,
       email: entity.email,
-      fname: entity.fname,
-      lname: entity.lname,
-      password: entity.password,
+      name: entity.name,
+      phone: entity.phone,
       image: entity.image,
+      password: entity.password,
     );
   }
 
   // To Entity
   AuthEntity toEntity() {
     return AuthEntity(
+      userId: studentId,
       email: email,
-      fname: fname,
-      lname: lname,
-      password: password,
+      name: name,
+      phone: phone,
       image: image,
+      password: password,
     );
   }
 
   @override
-  List<Object?> get props => [userId, email, fname, lname, password, image];
+  List<Object?> get props => [
+        studentId,
+        email,
+        name,
+        phone,
+        image,
+        password,
+      ];
 }

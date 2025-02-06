@@ -20,3 +20,9 @@ class ApiFailure extends Failure {
     required super.message,
   });
 }
+
+class SharedPrefsFailure extends Failure {
+  const SharedPrefsFailure({
+    required super.message,
+  });
+}

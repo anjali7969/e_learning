@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:e_learning/core/error/failure.dart';
 import 'package:e_learning/features/auth/data/data_source/remote_datasource/auth_remote_datasource.dart';
@@ -30,16 +32,26 @@ class AuthRemoteRepository implements IAuthRepository {
 
   @override
   Future<Either<Failure, String>> loginUser(
-      String username, String password) async {
+      String email, String password) async {
     try {
-      final student = await _authRemoteDatasource.loginUser(username, password);
+      final student = await _authRemoteDatasource.loginUser(email, password);
       return Right(student);
     } catch (e) {
       return Left(
-        LocalDatabaseFailure(
-          message: 'Login failed: $e',
+        ApiFailure(
+          message: e.toString(),
         ),
       );
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadprofilePicture(File file) async {
+    try {
+      final imageName = await _authRemoteDatasource.uploadprofilePicture(file);
+      return Right(imageName);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
     }
   }
 }

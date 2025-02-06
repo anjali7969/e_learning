@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:e_learning/core/network/hive_service.dart';
 import 'package:e_learning/features/auth/data/data_source/auth_data_source.dart';
 import 'package:e_learning/features/auth/data/model/auth_hive_model.dart';
@@ -13,9 +15,10 @@ class AuthLocalDataSource implements IAuthDataSource {
     // Return Empty AuthEntity
     return Future.value(const AuthEntity(
       userId: "1",
-      fname: "",
-      lname: "",
+      name: "",
+      phone: "",
       email: "",
+      image: "",
       password: "",
     ));
   }
@@ -41,5 +44,10 @@ class AuthLocalDataSource implements IAuthDataSource {
     } catch (e) {
       return Future.error(e);
     }
+  }
+
+  @override
+  Future<String> uploadProfilePicture(File file) {
+    throw UnimplementedError();
   }
 }

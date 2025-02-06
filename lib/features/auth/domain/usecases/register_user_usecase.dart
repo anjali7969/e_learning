@@ -8,15 +8,18 @@ import 'package:equatable/equatable.dart';
 class RegisterUserParams extends Equatable {
   final String? userId;
   final String email;
-  final String fname;
-  final String lname;
+  final String name;
+  final String phone;
+  final String? image;
+
   final String password;
 
   const RegisterUserParams({
     this.userId,
     required this.email,
-    required this.fname,
-    required this.lname,
+    required this.name,
+    required this.phone,
+    this.image,
     required this.password,
   });
 
@@ -24,13 +27,14 @@ class RegisterUserParams extends Equatable {
   const RegisterUserParams.initial({
     this.userId,
     required this.email,
-    required this.fname,
-    required this.lname,
+    required this.name,
     required this.password,
+    required this.phone,
+    this.image,
   });
 
   @override
-  List<Object?> get props => [userId, email, fname, lname, password];
+  List<Object?> get props => [userId, email, name, phone, image, password];
 }
 
 class RegisterUseCase implements UsecaseWithParams<void, RegisterUserParams> {
@@ -43,9 +47,10 @@ class RegisterUseCase implements UsecaseWithParams<void, RegisterUserParams> {
     final authEntity = AuthEntity(
       userId: params.userId,
       email: params.email,
-      fname: params.fname,
-      lname: params.lname,
+      name: params.name,
       password: params.password,
+      phone: params.phone,
+      image: params.image,
     );
     return repository.registerUser(authEntity);
   }

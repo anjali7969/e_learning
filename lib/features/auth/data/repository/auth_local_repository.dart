@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:e_learning/core/error/failure.dart';
 import 'package:e_learning/features/auth/data/data_source/local_datasource/auth_local_datasource.dart';
@@ -8,7 +10,7 @@ class AuthLocalRepository implements IAuthRepository {
   final AuthLocalDataSource _authLocalDataSource;
 
   AuthLocalRepository(this._authLocalDataSource);
-
+//jhgsdzuc
   @override
   Future<Either<Failure, AuthEntity>> getCurrentUser() async {
     try {
@@ -39,5 +41,11 @@ class AuthLocalRepository implements IAuthRepository {
     } catch (e) {
       return Left(LocalDatabaseFailure(message: e.toString()));
     }
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadprofilePicture(File file) async {
+    // TODO: implement uploadProfilePicture
+    throw UnimplementedError();
   }
 }
