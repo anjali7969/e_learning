@@ -446,7 +446,7 @@ class LoginView extends StatelessWidget {
                         children: [
                           // Email Input
                           TextFormField(
-                            key: const ValueKey('email'),
+                            key: const Key('email'),
                             controller: _emailController,
                             decoration: InputDecoration(
                               labelText: 'Email',
@@ -459,6 +459,11 @@ class LoginView extends StatelessWidget {
                               if (value!.isEmpty) {
                                 return 'Please enter your email';
                               }
+                              final emailRegex =
+                                  RegExp(r"^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                              if (!emailRegex.hasMatch(value)) {
+                                return "Enter a valid email address";
+                              }
                               return null;
                             },
                           ),
@@ -466,7 +471,7 @@ class LoginView extends StatelessWidget {
 
                           // Password Input
                           TextFormField(
-                            key: const ValueKey('password'),
+                            key: const Key('password'),
                             controller: _passwordController,
                             obscureText: true,
                             decoration: InputDecoration(
@@ -478,8 +483,8 @@ class LoginView extends StatelessWidget {
                               suffixIcon: const Icon(Icons.visibility_off),
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
+                              if (value == null || value.length < 8) {
+                                return 'Password must be at least 8 characters';
                               }
                               return null;
                             },
@@ -533,6 +538,7 @@ class LoginView extends StatelessWidget {
                                 ),
                               ),
                               child: const Text(
+                                key: Key('loginButton'),
                                 'Sign In',
                                 style: TextStyle(
                                   fontSize: 18,

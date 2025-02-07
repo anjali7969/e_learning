@@ -474,12 +474,12 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 );
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Registered Successfully!'),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   const SnackBar(
+                            //     content: Text('Registered Successfully!'),
+                            //     backgroundColor: Colors.green,
+                            //   ),
+                            // );
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -546,13 +546,26 @@ class _RegisterViewState extends State<RegisterView> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Please enter $labelText' : null,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter Your Name';
+        }
+        if (labelText == "Your Email" &&
+            !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+          return 'Enter a valid email';
+        }
+        if (labelText == "Phone Number" &&
+            !RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+          return 'Enter a valid phone number';
+        }
+        return null;
+      },
     );
   }
 
   Widget _buildPasswordField() {
     return TextFormField(
+      key: const Key('password'),
       controller: passwordController,
       obscureText: !_isPasswordVisible,
       decoration: InputDecoration(
@@ -562,6 +575,15 @@ class _RegisterViewState extends State<RegisterView> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter password';
+        }
+        if (value.length < 8) {
+          return 'Password must be at least 8 characters';
+        }
+        return null;
+      },
     );
   }
 }
