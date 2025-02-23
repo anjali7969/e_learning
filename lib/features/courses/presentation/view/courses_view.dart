@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:e_learning/features/cart/presentation/view/cart_view.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -68,21 +69,41 @@ class _CoursesScreenState extends State<CoursesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, // ✅ Match background color
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Removes the back arrow
+        automaticallyImplyLeading: false, // ✅ Removes the back arrow
+        backgroundColor: Colors.white, // ✅ Match navbar color
+        elevation: 0, // ✅ Removes the shadow when scrolling
         title: Align(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.only(
-                left: 20), // Adjust left padding as needed
+            padding: const EdgeInsets.only(left: 10),
             child: Image.asset(
               'assets/images/logo.png',
-              height: 90,
+              height: 100,
             ),
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: IconButton(
+              onPressed: () {
+                // Navigate to the cart screen when clicked
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const ShoppingCartScreen(userId: "USER_ID_HERE")),
+                );
+              },
+              icon: const Icon(Icons.shopping_cart,
+                  color: Colors.black), // ✅ Changed to Cart Icon
+            ),
+          ),
+        ],
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -144,8 +165,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
                 getImageUrl(course["image"]),
-                width: 80,
-                height: 80,
+                width: 110,
+                height: 90,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Image.asset(
                   "assets/images/placeholder.png", // ✅ Local fallback image
@@ -183,11 +204,11 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         _showCoursePopup(course);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: Colors.blue.shade700,
                         minimumSize: const Size(100, 35), // Prevents overflow
                       ),
                       child: const Text(
-                        "Watch Course",
+                        "Enroll Now",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -220,7 +241,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Image.network(
                     getImageUrl(course["image"]),
-                    width: 150,
+                    width: 220,
                     height: 150,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Image.asset(
@@ -263,17 +284,28 @@ class _CoursesScreenState extends State<CoursesScreen> {
                       // TODO: Implement Buy Now
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        minimumSize: const Size(120, 40)),
-                    child: const Text("Buy Now"),
+                      backgroundColor: Colors.blue.shade700,
+                      minimumSize: const Size(120, 40),
+                    ),
+                    child: const Text(
+                      "Buy Now",
+                      style: TextStyle(
+                          color: Colors.white), // ✅ White text for "Buy Now"
+                    ),
                   ),
                   OutlinedButton(
                     onPressed: () {
                       // TODO: Implement Add to Cart
                     },
                     style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(120, 40)),
-                    child: const Text("Add to Cart"),
+                      minimumSize: const Size(120, 40),
+                    ),
+                    child: const Text(
+                      "Add to Cart",
+                      style: TextStyle(
+                          color:
+                              Colors.black), // ✅ Black text for "Add to Cart"
+                    ),
                   ),
                 ],
               ),

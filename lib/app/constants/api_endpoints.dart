@@ -24,4 +24,15 @@ class ApiEndpoints {
 
   // ✅ Image Path
   static const String imageUrl1 = "${baseUrl}uploads/";
+
+  // ✅ Cart Routes (Added)
+  static const String addToCart = "cart/add";
+  static const String getCart = "cart/";
+  static const String updateCartItem = "cart/update/";
+  static const String removeCartItem = "cart/remove/";
+  static const String clearCart = "cart/clear/"; // Added clearCart endpoint
+
+  // ✅ Order Routes (Added)
+  static const String orderConfirm = "order/confirm";
+  static const String getOrder = "order/my-orders";
 }

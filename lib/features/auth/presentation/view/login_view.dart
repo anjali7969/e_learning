@@ -294,8 +294,8 @@ class LoginView extends StatelessWidget {
   LoginView({super.key});
 
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: 'dj@gmail.com');
+  final _passwordController = TextEditingController(text: '12345678');
 
   // Login Function
   void login(BuildContext context) async {

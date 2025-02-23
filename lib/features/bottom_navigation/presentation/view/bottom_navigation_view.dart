@@ -61,40 +61,65 @@
 //   }
 // }
 
-import 'package:e_learning/features/bottom_navigation/presentation/view_model/cubit/bottom_nav_cubit.dart';
-import 'package:e_learning/features/bottom_navigation/presentation/view_model/cubit/bottom_nav_state.dart';
+import 'package:e_learning/app/di/di.dart';
+import 'package:e_learning/features/bottom_navigation/presentation/view/bottom_view/profile.dart';
+import 'package:e_learning/features/cart/presentation/view/cart_view.dart';
+import 'package:e_learning/features/cart/presentation/view_model/cubit/cart_cubit.dart';
+import 'package:e_learning/features/courses/presentation/view/courses_view.dart';
+import 'package:e_learning/features/home/presentation/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BottomNavigationView extends StatelessWidget {
+class BottomNavigationView extends StatefulWidget {
   const BottomNavigationView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => BottomNavigationCubit(),
-      child: BlocBuilder<BottomNavigationCubit, BottomNavigationState>(
-        builder: (context, state) {
-          final cubit = context.read<BottomNavigationCubit>();
+  _BottomNavigationViewState createState() => _BottomNavigationViewState();
+}
 
-          return Scaffold(
-            body: cubit.currentView, // Get the current view dynamically
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: state.selectedIndex,
-              onTap: (index) => cubit.changeTab(index),
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.school), label: 'Courses'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.notifications), label: 'Notice'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'Profile'),
-              ],
-            ),
-          );
-        },
+class _BottomNavigationViewState extends State<BottomNavigationView> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const CoursesScreen(),
+    const ShoppingCartScreen(userId: "USER_ID_HERE"),
+    const ProfileScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<CartCubit>()..fetchCart("USER_ID_HERE"),
+        ),
+      ],
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          backgroundColor: Colors.white, // ✅ White background
+          selectedItemColor: Colors.blue.shade700, // ✅ Blue active icon
+          unselectedItemColor: Colors.grey, // ✅ Gray inactive icons
+          type: BottomNavigationBarType.fixed, // ✅ Ensures proper spacing
+          elevation: 5, // ✅ Adds a slight shadow effect
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.school), label: "Courses"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_cart), label: "Cart"),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          ],
+        ),
       ),
     );
   }
