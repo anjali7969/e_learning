@@ -63,27 +63,20 @@
 
 import 'package:e_learning/app/di/di.dart';
 import 'package:e_learning/features/bottom_navigation/presentation/view/bottom_view/profile.dart';
-import 'package:e_learning/features/cart/presentation/view/cart_view.dart';
-import 'package:e_learning/features/cart/presentation/view_model/cubit/cart_cubit.dart';
+import 'package:e_learning/features/bottom_navigation/presentation/view_model/cubit/bottom_nav_cubit.dart';
 import 'package:e_learning/features/courses/presentation/view/courses_view.dart';
+import 'package:e_learning/features/courses/presentation/view_model/cubit/course_cubit.dart';
 import 'package:e_learning/features/home/presentation/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BottomNavigationView extends StatefulWidget {
-  const BottomNavigationView({super.key});
+class BottomNavigationView extends StatelessWidget {
+  BottomNavigationView({super.key});
 
-  @override
-  _BottomNavigationViewState createState() => _BottomNavigationViewState();
-}
-
-class _BottomNavigationViewState extends State<BottomNavigationView> {
-  int _currentIndex = 0;
-
-  final List<Widget> _screens = [
+  final List<Widget> bottomScreens = [
     const HomeScreen(),
     const CoursesScreen(),
-    const ShoppingCartScreen(userId: "USER_ID_HERE"),
+    // const OrderScreen,
     const ProfileScreen(),
   ];
 
@@ -91,35 +84,65 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => getIt<CartCubit>()..fetchCart("USER_ID_HERE"),
-        ),
+        BlocProvider(create: (context) => getIt<BottomNavigationCubit>()),
+        BlocProvider(create: (context) => getIt<CoursesCubit>()..loadCourses()),
+        // BlocProvider(create: (context) => getIt<CartCubit>()..getCart()),
+        // BlocProvider(create: (context) => getIt<ProfileCubit>()..getProfile()),
       ],
-      child: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: _screens,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          backgroundColor: Colors.white, // ✅ White background
-          selectedItemColor: Colors.blue.shade700, // ✅ Blue active icon
-          unselectedItemColor: Colors.grey, // ✅ Gray inactive icons
-          type: BottomNavigationBarType.fixed, // ✅ Ensures proper spacing
-          elevation: 5, // ✅ Adds a slight shadow effect
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.school), label: "Courses"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart), label: "Cart"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-          ],
-        ),
+      child: BlocBuilder<BottomNavigationCubit, BottomNavigationState>(
+        builder: (context, state) {
+          final int selectedIndex =
+              context.watch<BottomNavigationCubit>().state.selectedIndex;
+
+          return Scaffold(
+            // appBar: AppBar(
+            //   title: const Text('E-Learning'),
+            //   centerTitle: true,
+            //   backgroundColor: Colors.blue.shade700,
+            //   actions: [
+            //     IconButton(
+            //       icon: const Icon(Icons.logout),
+            //       onPressed: () async {
+            //         getIt<Dio>().options.headers.remove('Authorization');
+            //         getIt<TokenSharedPrefs>().clearToken();
+
+            //         Navigator.pushReplacement(
+            //           context,
+            //           MaterialPageRoute(
+            //               builder: (context) => const LoginView()),
+            //         );
+            //       },
+            //     ),
+            //   ],
+            // ),
+            body: IndexedStack(
+              index: selectedIndex,
+              children: bottomScreens,
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.school), // ✅ Added Courses Icon
+                  label: 'Courses',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
+              ],
+              backgroundColor: Colors.white,
+              selectedItemColor: Colors.blue.shade700,
+              unselectedItemColor: Colors.grey,
+              currentIndex: selectedIndex,
+              onTap: context.read<BottomNavigationCubit>().changeIndex,
+            ),
+          );
+        },
       ),
     );
   }

@@ -19,7 +19,9 @@ void main() {
     repository = MockAuthRepository();
     tokenSharedPrefs = MockTokenSharedPrefs();
     usecase = LoginStudentUsecase(
-        authRepository: repository, tokenSharedPrefs: tokenSharedPrefs);
+        authRepository: repository,
+        tokenSharedPrefs: tokenSharedPrefs,
+        dio: Dio());
 
     registerFallbackValue(
         const LoginStudentParams(email: 'test@gmail.com', password: 'test123'));

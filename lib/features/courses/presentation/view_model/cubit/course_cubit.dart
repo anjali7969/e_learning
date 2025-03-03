@@ -1,60 +1,71 @@
-// import 'package:e_learning/features/courses/domain/use_case/get_courses_usecase.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
 
-// import 'course_state.dart';
-
-// class CourseCubit extends Cubit<CourseState> {
-//   final GetCourses getCoursesUseCase;
-
-//   CourseCubit(this.getCoursesUseCase) : super(CourseInitial());
-
-//   void fetchCourses() async {
-//     emit(CourseLoading());
-
-//     final result = await getCoursesUseCase();
-
-//     result.fold(
-//       (failure) => emit(CourseError(failure.message)),
-//       (courses) => emit(CourseLoaded(courses)),
-//     );
-//   }
-// }
-
-import 'package:e_learning/features/cart/domain/entity/cart_entity.dart';
-import 'package:e_learning/features/cart/domain/use_case/get_cart_usecase.dart';
+import 'package:e_learning/features/courses/data/model/course_api_model.dart';
+import 'package:e_learning/features/courses/domain/entity/course_entity.dart';
 import 'package:e_learning/features/courses/domain/use_case/get_courses_usecase.dart';
-import 'package:e_learning/features/courses/presentation/view_model/cubit/course_state.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CourseCubit extends Cubit<CourseState> {
-  final GetCourses getCoursesUseCase;
-  final GetCartUsecase getCartUseCase; // ✅ Added GetCartUsecase
+part 'course_state.dart';
 
-  CourseCubit({required this.getCoursesUseCase, required this.getCartUseCase})
-      : super(CourseInitial());
+class CoursesCubit extends Cubit<CoursesState> {
+  final GetCoursesUsecase getCoursesUsecase;
+  CoursesCubit(this.getCoursesUsecase) : super(const CoursesLoading());
 
-  /// ✅ Fetch Courses
-  void fetchCourses() async {
-    emit(CourseLoading());
+  int page = 1;
+  Timer? _debounce;
+  final String _currentSearchQuery = '';
 
-    final result = await getCoursesUseCase();
+  Future<void> loadCourses([CourseApiModel? request]) async {
+    emit(const CoursesLoading());
+    page = 1;
 
+    CourseApiModel courseRequest = request ??
+        CourseApiModel(
+          title: _currentSearchQuery,
+          description: '',
+          price: 0.0,
+          videoUrl: '', // ✅ Added videoUrl (default empty if null)
+        );
+
+    final result = await getCoursesUsecase(courseRequest);
     result.fold(
-      (failure) => emit(CourseError(failure.message)),
-      (courses) => emit(CourseLoaded(courses)),
+      (l) => emit(CoursesError(l.message)),
+      (r) => emit(CoursesLoaded(courses: r)),
     );
   }
 
-  /// ✅ Fetch Cart for User
-  Future<Cart?> fetchCart(String userId) async {
-    final result = await getCartUseCase(userId);
+  /// **📌 Load More Courses**
+  Future<void> loadMoreCourses([CourseApiModel? request]) async {
+    if (state is! CoursesLoaded) return;
+    page++;
 
-    return result.fold(
-      (failure) {
-        emit(CourseError(failure.message)); // ✅ Handle cart error if needed
-        return null;
+    CourseApiModel courseRequest = request ??
+        CourseApiModel(
+          title: _currentSearchQuery,
+          description: '',
+          price: 0.0,
+          videoUrl: '', // ✅ Ensure videoUrl is handled
+        );
+
+    final result = await getCoursesUsecase(courseRequest);
+    result.fold(
+      (l) => emit(CoursesError(l.message)),
+      (r) {
+        final currentState = state as CoursesLoaded;
+        emit(CoursesLoaded(courses: [...currentState.courses, ...r]));
       },
-      (cart) => cart,
     );
+  }
+
+  /// **🔹 Open Course Details**
+  void openCourseDetails(CourseEntity course) {
+    emit(NavigateToCourseDetails(course));
+  }
+
+  @override
+  Future<void> close() {
+    _debounce?.cancel();
+    return super.close();
   }
 }

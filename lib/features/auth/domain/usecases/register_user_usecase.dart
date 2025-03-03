@@ -5,13 +5,13 @@ import 'package:e_learning/features/auth/domain/entity/auth_entity.dart';
 import 'package:e_learning/features/auth/domain/repository/auth_repository.dart';
 import 'package:equatable/equatable.dart';
 
+/// **📌 Register Parameters**
 class RegisterUserParams extends Equatable {
   final String? userId;
   final String email;
   final String name;
   final String phone;
   final String? image;
-
   final String password;
 
   const RegisterUserParams({
@@ -23,7 +23,7 @@ class RegisterUserParams extends Equatable {
     required this.password,
   });
 
-  //intial constructor
+  /// **📌 Initial Constructor**
   const RegisterUserParams.initial({
     this.userId,
     required this.email,
@@ -37,13 +37,14 @@ class RegisterUserParams extends Equatable {
   List<Object?> get props => [userId, email, name, phone, image, password];
 }
 
+/// **📌 Register UseCase**
 class RegisterUseCase implements UsecaseWithParams<void, RegisterUserParams> {
   final IAuthRepository repository;
 
   RegisterUseCase(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(RegisterUserParams params) {
+  Future<Either<Failure, void>> call(RegisterUserParams params) async {
     final authEntity = AuthEntity(
       userId: params.userId,
       email: params.email,
@@ -52,6 +53,7 @@ class RegisterUseCase implements UsecaseWithParams<void, RegisterUserParams> {
       phone: params.phone,
       image: params.image,
     );
+
     return repository.registerUser(authEntity);
   }
 }

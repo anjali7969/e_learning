@@ -365,7 +365,9 @@
 import 'dart:convert';
 
 import 'package:e_learning/app/di/di.dart';
+import 'package:e_learning/app/shared_prefs/token_shared_prefs.dart';
 import 'package:e_learning/features/auth/domain/repository/auth_repository.dart';
+import 'package:e_learning/features/auth/presentation/view/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -410,6 +412,17 @@ class _HomeScreenState extends State<HomeScreen> {
         isLoading = false;
       });
     }
+  }
+
+  void logoutUser(BuildContext context) async {
+    // ✅ Clear Authentication Token (But NOT Onboarding Preference)
+    await getIt<TokenSharedPrefs>().clearToken();
+
+    // ✅ Navigate Directly to Login Page (Onboarding Preference Stays)
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginView()),
+    );
   }
 
   // ✅ Get Image URL
@@ -484,8 +497,8 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: const EdgeInsets.only(right: 10),
           child: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.favorite_border, color: Colors.black),
+            onPressed: () => logoutUser(context),
+            icon: const Icon(Icons.logout, color: Colors.black),
           ),
         ),
       ],

@@ -1,33 +1,98 @@
 import 'package:dio/dio.dart';
-import 'package:e_learning/app/constants/api_endpoints.dart';
-import 'package:e_learning/features/courses/data/dto/course_dto.dart';
+import 'package:e_learning/features/courses/data/model/course_api_model.dart';
 import 'package:e_learning/features/courses/domain/entity/course_entity.dart';
 
-abstract class ICourseRemoteDataSource {
-  Future<List<CourseEntity>> getAllCourses();
-}
+import '../../../../../app/constants/api_endpoints.dart';
 
-class CourseRemoteDataSource implements ICourseRemoteDataSource {
+class CourseRemoteDatasource {
   final Dio _dio;
 
-  CourseRemoteDataSource(this._dio);
+  CourseRemoteDatasource(this._dio);
 
-  @override
+  // Future<void> createProduct(ProductEntity product) async {
+  //   try {
+  //     // Convert entity to model
+  //     var productApiModel = ProductApiModel.fromEntity(product);
+  //     var response = await _dio.post(
+  //       ApiEndpoints.createProduct,
+  //       data: productApiModel.toJson(),
+  //     );
+  //     if (response.statusCode == 201) {
+  //       return;
+  //     } else {
+  //       throw Exception(response.statusMessage);
+  //     }
+  //   } on DioException catch (e) {
+  //     throw Exception(e.message);
+  //   } catch (e) {
+  //     throw Exception(e.toString());
+  //   }
+  // }
+
   Future<List<CourseEntity>> getAllCourses() async {
     try {
       var response = await _dio.get(ApiEndpoints.getAllCourses);
-
       if (response.statusCode == 200) {
-        List<CourseModel> courseModels = (response.data as List)
-            .map((json) => CourseModel.fromJson(json))
+        var data = response.data as List<dynamic>;
+        return data
+            .map((course) => CourseApiModel.fromJson(course).toEntity())
             .toList();
-
-        return courseModels.map((model) => model.toEntity()).toList();
       } else {
-        throw Exception("Failed to load courses");
+        throw Exception(response.statusMessage);
       }
     } on DioException catch (e) {
-      throw Exception("API error: ${e.message}");
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
+
+  Future<CourseEntity> getCourseById(String courseId) async {
+    try {
+      var response = await _dio.get('${ApiEndpoints.getCourseById}/$courseId');
+      if (response.statusCode == 200) {
+        return CourseApiModel.fromJson(response.data).toEntity();
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  // Future<void> updateProduct(ProductEntity productEntity) async {
+  //   try {
+  //     var productApiModel = ProductApiModel.fromEntity(productEntity);
+  //     var response = await _dio.put(
+  //       '${ApiEndpoints.updateProduct}/${productEntity.id}',
+  //       data: productApiModel.toJson(),
+  //     );
+  //     if (response.statusCode == 200) {
+  //       return;
+  //     } else {
+  //       throw Exception(response.statusMessage);
+  //     }
+  //   } on DioException catch (e) {
+  //     throw Exception(e.message);
+  //   } catch (e) {
+  //     throw Exception(e.toString());
+  //   }
+  // }
+
+  // Future<void> deleteProduct(String id, String? token) async {
+  //   try {
+  //     var response = await _dio.delete('${ApiEndpoints.deleteProduct}/$id');
+  //     if (response.statusCode == 200) {
+  //       return;
+  //     } else {
+  //       throw Exception(response.statusMessage);
+  //     }
+  //   } on DioException catch (e) {
+  //     throw Exception(e.message);
+  //   } catch (e) {
+  //     throw Exception(e.toString());
+  //   }
+  // }
 }

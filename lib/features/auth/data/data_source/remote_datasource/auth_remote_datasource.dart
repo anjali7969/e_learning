@@ -13,6 +13,7 @@ class AuthRemoteDataSource implements IAuthDataSource {
 
   AuthRemoteDataSource(this._dio, this._tokenPrefs);
 
+  /// **🔹 Register User**
   @override
   Future<void> registerUser(AuthEntity user) async {
     try {
@@ -23,36 +24,16 @@ class AuthRemoteDataSource implements IAuthDataSource {
       );
 
       if (response.statusCode != 201) {
-        throw Exception('Failed to register: ${response.statusMessage}');
+        throw Exception('❌ Registration failed: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      throw Exception('Network error during registration: ${e.message}');
+      throw Exception('❌ Network error during registration: ${e.message}');
     } catch (e) {
-      throw Exception('Unexpected error: $e');
+      throw Exception('❌ Unexpected error: $e');
     }
   }
 
-  // @override
-  // Future<String> loginUser(String email, String password) async {
-  //   try {
-  //     var response = await _dio.post(
-  //       ApiEndpoints.login,
-  //       data: {'email': email, 'password': password},
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final str = response.data['token'];
-  //       return str;
-  //     } else {
-  //       throw Exception('Failed to login: ${response.statusMessage}');
-  //     }
-  //   } on DioException catch (e) {
-  //     throw Exception('Network error during login: ${e.message}');
-  //   } catch (e) {
-  //     throw Exception('Unexpected error: $e');
-  //   }
-  // }
-
+  /// **🔹 Login User**
   @override
   Future<String> loginUser(String email, String password) async {
     try {
@@ -77,15 +58,16 @@ class AuthRemoteDataSource implements IAuthDataSource {
 
         return token;
       } else {
-        throw Exception('Failed to login: ${response.statusMessage}');
+        throw Exception('❌ Login failed: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      throw Exception('Network error during login: ${e.message}');
+      throw Exception('❌ Network error during login: ${e.message}');
     } catch (e) {
-      throw Exception('Unexpected error: $e');
+      throw Exception('❌ Unexpected error: $e');
     }
   }
 
+  /// **🔹 Get Current User**
   @override
   Future<AuthEntity> getCurrentUser() async {
     try {
@@ -117,12 +99,13 @@ class AuthRemoteDataSource implements IAuthDataSource {
         throw Exception('❌ Failed to fetch user: ${response.statusMessage}');
       }
     } catch (e) {
-      throw Exception('Network error while fetching user: $e');
+      throw Exception('❌ Network error while fetching user: $e');
     }
   }
 
+  /// **🔹 Upload Profile Picture**
   @override
-  Future<String> uploadprofilePicture(File file) async {
+  Future<String> uploadProfilePicture(File file) async {
     try {
       String fileName = file.path.split('/').last;
       FormData formData = FormData.fromMap({
@@ -139,12 +122,12 @@ class AuthRemoteDataSource implements IAuthDataSource {
         return response.data['data'];
       } else {
         throw Exception(
-            'Failed to upload profile picture: ${response.statusMessage}');
+            '❌ Failed to upload profile picture: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      throw Exception('Network error during profile upload: ${e.message}');
+      throw Exception('❌ Network error during profile upload: ${e.message}');
     } catch (e) {
-      throw Exception('Unexpected error: $e');
+      throw Exception('❌ Unexpected error: $e');
     }
   }
 }

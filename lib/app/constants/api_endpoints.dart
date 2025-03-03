@@ -21,6 +21,7 @@ class ApiEndpoints {
 
   // ✅ Course Routes
   static const String getAllCourses = "courses/all"; // <-- Fetch all courses
+  static const String getCourseById = "courses/:courseId";
 
   // ✅ Image Path
   static const String imageUrl1 = "${baseUrl}uploads/";

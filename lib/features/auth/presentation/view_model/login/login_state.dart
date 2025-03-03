@@ -1,58 +1,30 @@
-// part of 'login_bloc.dart';
-
-// class LoginState {
-//   final bool isLoading;
-//   final bool isSuccess;
-
-//   LoginState({
-//     required this.isLoading,
-//     required this.isSuccess,
-//   });
-
-//   LoginState.initial()
-//       : isLoading = false,
-//         isSuccess = false;
-
-//   LoginState copyWith({
-//     bool? isLoading,
-//     bool? isSuccess,
-//   }) {
-//     return LoginState(
-//       isLoading: isLoading ?? this.isLoading,
-//       isSuccess: isSuccess ?? this.isSuccess,
-//     );
-//   }
-// }
-
 part of 'login_bloc.dart';
 
-class LoginState extends Equatable {
-  final bool isLoading;
-  final bool isSuccess;
-
-  const LoginState({
-    required this.isLoading,
-    required this.isSuccess,
-  });
-
-  factory LoginState.initial() {
-    return const LoginState(
-      isLoading: false,
-      isSuccess: false,
-    );
-  }
-
-  LoginState copyWith({
-    bool? isLoading,
-    bool? isSuccess,
-  }) {
-    return LoginState(
-      isLoading: isLoading ?? this.isLoading,
-      isSuccess: isSuccess ?? this.isSuccess,
-    );
-  }
+abstract class LoginState extends Equatable {
+  const LoginState();
 
   @override
-  List<Object?> get props =>
-      [isLoading, isSuccess]; // ✅ Ensures state comparison
+  List<Object> get props => [];
+}
+
+class LoginInitial extends LoginState {
+  const LoginInitial();
+}
+
+class LoginLoading extends LoginState {
+  const LoginLoading();
+}
+
+class LoginSuccess extends LoginState {
+  @override
+  List<Object> get props => [];
+}
+
+class LoginError extends LoginState {
+  final String message;
+
+  const LoginError({required this.message});
+
+  @override
+  List<Object> get props => [message];
 }

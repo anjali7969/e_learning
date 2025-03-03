@@ -1,5 +1,6 @@
 // import 'package:e_learning/features/auth/domain/usecases/login_student_usecase.dart';
 // import 'package:e_learning/features/auth/presentation/view_model/signup/register_bloc.dart';
+// import 'package:e_learning/features/home/presentation/view_model/home/home_bloc.dart';
 // import 'package:equatable/equatable.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,52 +10,81 @@
 
 // class LoginBloc extends Bloc<LoginEvent, LoginState> {
 //   final LoginStudentUsecase _loginStudentUseCase;
+//   final HomeBloc _homeBloc;
+//   final RegisterBloc _registerBloc;
 
 //   LoginBloc({
 //     required RegisterBloc registerBloc,
+//     required HomeBloc homeBloc,
 //     required LoginStudentUsecase loginStudentUseCase,
 //   })  : _loginStudentUseCase = loginStudentUseCase,
+//         _homeBloc = homeBloc,
+//         _registerBloc = registerBloc,
 //         super(LoginState.initial()) {
-//     // Handle navigation to the Login screen
-//     on<NavigateRegisterScreenEvent>((event, emit) {
-//       _handleNavigationToRegisterScreen(event);
-//     });
+//     // Handle login event
+//     on<LoginStudentEvent>(_onLoginStudentEvent);
+
+//     // Handle navigation to the Register screen
+//     on<NavigateRegisterScreenEvent>(_handleNavigationToRegisterScreen);
 //   }
 
-//   void _handleNavigationToRegisterScreen(NavigateRegisterScreenEvent event) {
+//   /// **📌 Handle Login Event**
+//   Future<void> _onLoginStudentEvent(
+//       LoginStudentEvent event, Emitter<LoginState> emit) async {
+//     emit(state.copyWith(isLoading: true));
+
+//     final params = LoginStudentParams(
+//       email: event.email,
+//       password: event.password,
+//     );
+
+//     final result = await _loginStudentUseCase.call(params);
+
+//     result.fold(
+//       (failure) {
+//         emit(state.copyWith(isLoading: false, isSuccess: false));
+
+//         // ❌ Show error message
+//         ScaffoldMessenger.of(event.context).showSnackBar(
+//           SnackBar(
+//             content: Text('Login failed: ${failure.message}'),
+//             backgroundColor: Colors.red,
+//           ),
+//         );
+//       },
+//       (user) {
+//         emit(state.copyWith(isLoading: false, isSuccess: true));
+
+//         // ✅ Navigate to Home Screen on Success
+//         Navigator.pushReplacement(
+//           event.context,
+//           MaterialPageRoute(
+//             builder: (context) => BlocProvider.value(
+//               value: _homeBloc,
+//               child: event.destination,
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+
+//   /// **📌 Handle Navigation to Register Screen**
+//   void _handleNavigationToRegisterScreen(
+//       NavigateRegisterScreenEvent event, Emitter<LoginState> emit) {
 //     Navigator.push(
 //       event.context,
 //       MaterialPageRoute(
-//         builder: (context) =>
-//             event.destination, // Destination widget (e.g., LoginPage)
+//         builder: (context) => BlocProvider.value(
+//           value: _registerBloc,
+//           child: event.destination,
+//         ),
 //       ),
 //     );
-//     on<LoginStudentEvent>((event, emit) async {
-//       emit(state.copyWith(isLoading: true));
-
-//       final params = LoginStudentParams(
-//         email: event.email,
-//         password: event.password,
-//       );
-
-//       final result = await _loginStudentUseCase.call(params);
-
-//       result.fold(
-//         (failure) {
-//           // Handle failure (update the state with error message or show a failure alert)
-//           emit(state.copyWith(isLoading: false, isSuccess: false));
-//         },
-//         (student) {
-//           // On success, update state and navigate to the home screen
-//           emit(state.copyWith(isLoading: false, isSuccess: true));
-//         },
-//       );
-//     });
 //   }
 // }
 
 import 'package:e_learning/features/auth/domain/usecases/login_student_usecase.dart';
-import 'package:e_learning/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,39 +93,28 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  final LoginStudentUsecase _loginStudentUseCase;
+  final LoginStudentUsecase loginUseCase;
 
-  LoginBloc({
-    required RegisterBloc registerBloc,
-    required LoginStudentUsecase loginStudentUseCase,
-  })  : _loginStudentUseCase = loginStudentUseCase,
-        super(LoginState.initial()) {
-    // Handle login event
-    on<LoginStudentEvent>(_onLoginStudentEvent);
-
+  LoginBloc(this.loginUseCase) : super(const LoginInitial()) {
     // Handle navigation to the Register screen
     on<NavigateRegisterScreenEvent>((event, emit) {
       _handleNavigationToRegisterScreen(event);
     });
-  }
 
-  Future<void> _onLoginStudentEvent(
-      LoginStudentEvent event, Emitter<LoginState> emit) async {
-    emit(state.copyWith(isLoading: true));
+    // Handle login
+    on<LoginStudentEvent>(
+      (event, emit) async {
+        emit(const LoginLoading());
 
-    final params = LoginStudentParams(
-      email: event.email,
-      password: event.password,
-    );
+        final result = await loginUseCase(LoginStudentParams(
+          email: event.email,
+          password: event.password,
+        ));
 
-    final result = await _loginStudentUseCase.call(params);
-
-    result.fold(
-      (failure) {
-        emit(state.copyWith(isLoading: false, isSuccess: false));
-      },
-      (success) {
-        emit(state.copyWith(isLoading: false, isSuccess: true));
+        result.fold(
+          (failure) => emit(LoginError(message: failure.message)),
+          (success) => emit(LoginSuccess()),
+        );
       },
     );
   }

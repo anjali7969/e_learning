@@ -1,17 +1,40 @@
-import 'package:e_learning/features/courses/domain/entity/course_entity.dart';
+part of 'course_cubit.dart';
 
-abstract class CourseState {}
+abstract class CoursesState extends Equatable {
+  const CoursesState();
 
-class CourseInitial extends CourseState {}
-
-class CourseLoading extends CourseState {}
-
-class CourseLoaded extends CourseState {
-  final List<CourseEntity> courses;
-  CourseLoaded(this.courses);
+  @override
+  List<Object> get props => [];
 }
 
-class CourseError extends CourseState {
+class CoursesLoading extends CoursesState {
+  const CoursesLoading();
+}
+
+class CoursesLoaded extends CoursesState {
+  final List<CourseEntity> courses;
+
+  const CoursesLoaded({required this.courses});
+
+  @override
+  List<Object> get props => [courses];
+}
+
+class CoursesError extends CoursesState {
   final String message;
-  CourseError(this.message);
+
+  const CoursesError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+/// **📌 New State for Navigation**
+class NavigateToCourseDetails extends CoursesState {
+  final CourseEntity course;
+
+  const NavigateToCourseDetails(this.course);
+
+  @override
+  List<Object> get props => [course];
 }

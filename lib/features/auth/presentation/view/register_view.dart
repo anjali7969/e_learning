@@ -399,7 +399,7 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 50),
+                const SizedBox(height: 70),
 
                 // Profile Image Selection with Camera Icon
                 Stack(
@@ -472,7 +472,7 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                 const Text(
                   'SIGN UP',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 28,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -555,7 +555,8 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginView()),
+                          MaterialPageRoute(
+                              builder: (context) => const LoginView()),
                         );
                       },
                       child: const Text("Sign In",
