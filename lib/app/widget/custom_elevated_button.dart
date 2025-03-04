@@ -1,4 +1,3 @@
-// app/widget/custom_elevated_button.dart
 import 'package:flutter/material.dart';
 
 class CustomElevatedButton extends StatelessWidget {
@@ -17,7 +16,8 @@ class CustomElevatedButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).primaryColor,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 12), // ✅ Fixed
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
