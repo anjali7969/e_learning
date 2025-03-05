@@ -62,11 +62,11 @@
 // }
 
 import 'package:e_learning/app/di/di.dart';
-import 'package:e_learning/features/bottom_navigation/presentation/view/bottom_view/profile.dart';
 import 'package:e_learning/features/bottom_navigation/presentation/view_model/cubit/bottom_nav_cubit.dart';
 import 'package:e_learning/features/courses/presentation/view/courses_view.dart';
 import 'package:e_learning/features/courses/presentation/view_model/cubit/course_cubit.dart';
 import 'package:e_learning/features/home/presentation/view/home.dart';
+import 'package:e_learning/features/profile/presentation/view/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -76,7 +76,7 @@ class BottomNavigationView extends StatelessWidget {
   final List<Widget> bottomScreens = [
     const HomeScreen(),
     const CoursesScreen(),
-    // const OrderScreen,
+    // const CartPage(),
     const ProfileScreen(),
   ];
 
@@ -130,6 +130,10 @@ class BottomNavigationView extends StatelessWidget {
                   icon: Icon(Icons.school), // ✅ Added Courses Icon
                   label: 'Courses',
                 ),
+                // BottomNavigationBarItem(
+                //   icon: Icon(Icons.receipt_long), // 🛒 Order icon
+                //   label: 'Orders',
+                // ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
                   label: 'Profile',

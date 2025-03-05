@@ -85,7 +85,7 @@ void main() {
       MaterialApp(
         home: BlocProvider<LoginBloc>.value(
           value: loginBloc,
-          child: LoginView(),
+          child: const LoginView(),
         ),
       ),
     );
@@ -108,7 +108,7 @@ void main() {
       MaterialApp(
         home: BlocProvider<LoginBloc>.value(
           value: loginBloc,
-          child: LoginView(),
+          child: const LoginView(),
         ),
       ),
     );

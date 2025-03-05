@@ -49,6 +49,17 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     super.dispose();
   }
 
+  /// **📌 Show Snackbar when course is added**
+  void _showAddedToCartMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("${widget.title} added to cart successfully!"),
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -150,7 +161,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
 
               const SizedBox(height: 40),
 
-              // 🛒 Buy Now Button with Gradient
+              // 🛒 Buy Now Button with Gradient & Snackbar
               Container(
                 width: double.infinity,
                 height: 50,
@@ -170,9 +181,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {
-                    // Add functionality here
-                  },
+                  onPressed:
+                      _showAddedToCartMessage, // ✅ Show Snackbar on click
                   child: const Text(
                     "BUY NOW",
                     style: TextStyle(

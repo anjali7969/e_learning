@@ -76,7 +76,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         // ✅ Navigate to LoginView after successful registration
         Navigator.pushReplacement(
           event.context,
-          MaterialPageRoute(builder: (context) => LoginView()),
+          MaterialPageRoute(builder: (context) => const LoginView()),
         );
       },
     );
