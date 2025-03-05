@@ -151,8 +151,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
               description: course["description"],
               imageUrl: getImageUrl(course["image"]),
               price: course["price"].toDouble(),
-              rating:
-                  course["rating"]?.toDouble() ?? 0.0, // Handle rating if null
+              rating: course["rating"]?.toDouble() ?? 0.0,
+              courseId: '', // Handle rating if null
               // videoUrl:
               //     course["videoUrl"] ?? '', // Handle null videoUrl gracefully
             ),
