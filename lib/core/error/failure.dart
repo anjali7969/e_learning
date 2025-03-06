@@ -26,3 +26,7 @@ class SharedPrefsFailure extends Failure {
     required super.message,
   });
 }
+
+class NoInternetFailure extends Failure {
+  const NoInternetFailure() : super(message: 'No internet connection');
+}

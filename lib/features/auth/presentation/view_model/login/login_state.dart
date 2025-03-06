@@ -1,25 +1,30 @@
 part of 'login_bloc.dart';
 
-class LoginState {
-  final bool isLoading;
-  final bool isSuccess;
+abstract class LoginState extends Equatable {
+  const LoginState();
 
-  LoginState({
-    required this.isLoading,
-    required this.isSuccess,
-  });
+  @override
+  List<Object> get props => [];
+}
 
-  LoginState.initial()
-      : isLoading = false,
-        isSuccess = false;
+class LoginInitial extends LoginState {
+  const LoginInitial();
+}
 
-  LoginState copyWith({
-    bool? isLoading,
-    bool? isSuccess,
-  }) {
-    return LoginState(
-      isLoading: isLoading ?? this.isLoading,
-      isSuccess: isSuccess ?? this.isSuccess,
-    );
-  }
+class LoginLoading extends LoginState {
+  const LoginLoading();
+}
+
+class LoginSuccess extends LoginState {
+  @override
+  List<Object> get props => [];
+}
+
+class LoginError extends LoginState {
+  final String message;
+
+  const LoginError({required this.message});
+
+  @override
+  List<Object> get props => [message];
 }

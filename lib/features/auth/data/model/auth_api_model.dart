@@ -9,7 +9,6 @@ class AuthApiModel extends Equatable {
   @JsonKey(name: '_id')
   final String? studentId;
   final String name;
-
   final String email;
   final String phone;
   final String? image;

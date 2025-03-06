@@ -1,15 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:e_learning/app/shared_prefs/token_shared_prefs.dart';
+import 'package:e_learning/app/shared_prefs/user_shared_prefs.dart';
 import 'package:e_learning/app/usecase/usecase.dart';
 import 'package:e_learning/core/error/failure.dart';
 import 'package:e_learning/features/auth/domain/repository/auth_repository.dart';
 import 'package:equatable/equatable.dart';
 
-class LoginStudentParams extends Equatable {
+class LoginUserParams extends Equatable {
   final String email;
   final String password;
 
-  const LoginStudentParams({
+  const LoginUserParams({
     required this.email,
     required this.password,
   });
@@ -21,41 +22,61 @@ class LoginStudentParams extends Equatable {
       ];
 }
 
-// class LoginStudentUsecase
-//     implements UsecaseWithParams<void, LoginStudentParams> {
-//   final IAuthRepository authRepository;
+class AuthResponse extends Equatable {
+  final String token;
+  final String userId;
+  final String name;
+  final String email;
+  final String role;
 
-//   const LoginStudentUsecase({required this.authRepository});
+  const AuthResponse({
+    required this.token,
+    required this.userId,
+    required this.name,
+    required this.email,
+    required this.role,
+  });
 
-//   @override
-//   Future<Either<Failure, void>> call(LoginStudentParams params) async {
-//     return await authRepository.loginUser(params.email, params.password);
-//   }
-// }
-
-class LoginStudentUsecase
-    implements UsecaseWithParams<void, LoginStudentParams> {
-  final IAuthRepository authRepository;
-  final TokenSharedPrefs tokenSharedPrefs;
-
-  LoginStudentUsecase(
-      {required this.authRepository, required this.tokenSharedPrefs});
   @override
-  Future<Either<Failure, void>> call(LoginStudentParams params) {
-    //save token in shared preferences
-    return authRepository
-        .loginUser(params.email, params.password)
-        .then((value) {
-      return value.fold(
-        (failure) => left(failure),
-        (token) {
-          tokenSharedPrefs.saveToken(token);
-          // tokenSharedPrefs.getToken().then((value) {
-          //   print(value);
-          // });
-          return Right(token);
-        },
-      );
-    });
+  List<Object?> get props => [token, userId, name, email, role];
+}
+
+class LoginUseCase implements UsecaseWithParams<void, LoginUserParams> {
+  final IAuthRepository repository;
+  final TokenSharedPrefs tokenSharedPrefs;
+  final UserSharedPrefs userSharedPrefs;
+
+  LoginUseCase({
+    required this.repository,
+    required this.tokenSharedPrefs,
+    required this.userSharedPrefs,
+  });
+
+  @override
+  Future<Either<Failure, AuthResponse>> call(LoginUserParams params) async {
+    final result = await repository.loginUser(params.email, params.password);
+
+    return result.fold(
+      (failure) => Left(failure),
+      (authResponse) async {
+        print(
+            "Raw Response: ${authResponse.token} - ${authResponse.userId}"); // Debugging output
+
+        // Extract user details
+        final String token = authResponse.token;
+        final String userId = authResponse.userId;
+        final String name = authResponse.name;
+        final String email = authResponse.email;
+        final String role = authResponse.role;
+
+        // Save token & user details
+        await tokenSharedPrefs.saveToken(token);
+        await userSharedPrefs.saveUserData(userId, name, email, role);
+
+        print("User Data Stored: ID=$userId, Name=$name, Role=$role");
+
+        return Right(authResponse);
+      },
+    );
   }
 }

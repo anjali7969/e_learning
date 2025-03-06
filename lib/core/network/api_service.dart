@@ -19,42 +19,12 @@ class ApiService {
         requestBody: true,
         responseHeader: true,
       ))
+      ..options.validateStatus = (status) {
+        return status! < 500;
+      }
       ..options.headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       };
-  }
-
-  Future<Map<String, dynamic>?> loginUser(String email, String password) async {
-    try {
-      // Sending the login request
-      final response = await _dio.post(
-        ApiEndpoints.login,
-        data: {
-          'email': email,
-          'password': password,
-        },
-      );
-
-      // Log the full response to understand the structure
-      print("API Response: ${response.data}");
-
-      // Check if the response status code is 200 and the success flag is true
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        // Successfully logged in, return the full response data (including the token)
-        return response
-            .data; // This returns the entire response, including the token
-      } else {
-        // Log the failure response
-        print("Login failed: ${response.data['message']}");
-      }
-    } catch (e) {
-      // Log error during API call
-      print("Error during login: $e");
-      rethrow; // Propagate error for further handling
-    }
-
-    // Return null if login fails or an error occurs
-    return null;
   }
 }

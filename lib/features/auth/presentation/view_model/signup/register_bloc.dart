@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:e_learning/core/common/snackbar/my_snackbar.dart';
 import 'package:e_learning/features/auth/domain/usecases/register_user_usecase.dart';
 import 'package:e_learning/features/auth/domain/usecases/upload_image_usecase.dart';
+import 'package:e_learning/features/auth/presentation/view/login_view.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'register_event.dart';
@@ -71,6 +72,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         emit(state.copyWith(isLoading: false, isSuccess: true));
         showMySnackBar(
             context: event.context, message: "Registration successful");
+
+        // ✅ Navigate to LoginView after successful registration
+        Navigator.pushReplacement(
+          event.context,
+          MaterialPageRoute(builder: (context) => const LoginView()),
+        );
       },
     );
   }
