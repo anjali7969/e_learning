@@ -8,9 +8,13 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:flutter_test/flutter_test.dart';
+// import 'package:get_it/get_it.dart';
 // import 'package:mocktail/mocktail.dart';
 
-// class MockLoginUsecase extends Mock implements LoginStudentUsecase {}
+// class MockLoginUsecase extends Mock implements LoginUseCase {}
+
+// class MockLoginBloc extends MockBloc<LoginEvent, LoginState>
+//     implements LoginBloc {}
 
 // class MockRegisterBloc extends MockBloc<RegisterEvent, RegisterState>
 //     implements RegisterBloc {}
@@ -19,91 +23,96 @@
 //   late LoginBloc loginBloc;
 //   late MockLoginUsecase loginUsecase;
 //   late RegisterBloc registerBloc;
+//   late GetIt getIt;
 
 //   setUp(() {
 //     loginUsecase = MockLoginUsecase();
 //     registerBloc = MockRegisterBloc();
-//     loginBloc = LoginBloc(
-//       registerBloc: registerBloc,
-//       loginStudentUseCase: loginUsecase,
+//     loginBloc = MockLoginBloc();
+
+//     getIt = GetIt.instance;
+//     getIt.reset(); // Clears previous registrations
+
+//     // Register the mock LoginBloc in GetIt for dependency injection
+//     getIt.registerFactory<LoginBloc>(() => loginBloc);
+
+//     // Ensure LoginBloc starts with the initial state
+//     when(() => loginBloc.state).thenReturn(const LoginInitial());
+//   });
+
+//   testWidgets('Check email and password input fields exist', (tester) async {
+//     await tester.pumpWidget(
+//       MaterialApp(
+//         home: BlocProvider<LoginBloc>.value(
+//           value: loginBloc,
+//           child: const LoginView(),
+//         ),
+//       ),
 //     );
 
-//     registerFallbackValue(const LoginStudentParams(email: '', password: ''));
+//     await tester.pumpAndSettle();
+
+//     expect(find.byKey(const Key('email')), findsOneWidget);
+//     expect(find.byKey(const Key('password')), findsOneWidget);
 //   });
 
-//   test('initial state should be LoginState.initial()', () {
-//     expect(loginBloc.state, equals(LoginState.initial()));
-//     expect(loginBloc.state.isLoading, false);
-//     expect(loginBloc.state.isSuccess, false);
-//   });
-
-//   testWidgets('Check for the email and password input fields in LoginView',
+//   testWidgets('Check form validation errors when inputs are empty',
 //       (tester) async {
-//     await tester.pumpWidget(MaterialApp(
-//       home: BlocProvider(
-//         create: (context) => loginBloc,
-//         child: LoginView(),
+//     await tester.pumpWidget(
+//       MaterialApp(
+//         home: BlocProvider<LoginBloc>.value(
+//           value: loginBloc,
+//           child: const LoginView(),
+//         ),
 //       ),
-//     ));
+//     );
 
 //     await tester.pumpAndSettle();
 
-//     await tester.enterText(find.byType(TextFormField).at(0), 'user@gmail.com');
-//     await tester.enterText(find.byType(TextFormField).at(1), 'password123');
+//     await tester.enterText(find.byKey(const Key('email')), '');
+//     await tester.enterText(find.byKey(const Key('password')), '');
 
-//     expect(find.text('user@gmail.com'), findsOneWidget);
-//     expect(find.text('password123'), findsOneWidget);
-//   });
-
-//   testWidgets('Check for validator errors when inputs are empty',
-//       (tester) async {
-//     await tester.pumpWidget(MaterialApp(
-//       home: BlocProvider(
-//         create: (context) => loginBloc,
-//         child: LoginView(),
-//       ),
-//     ));
-
-//     await tester.pumpAndSettle();
-
-//     await tester.enterText(find.byType(TextFormField).at(0), '');
-//     await tester.enterText(find.byType(TextFormField).at(1), '');
-
-//     await tester.tap(find.byType(ElevatedButton).first);
-
+//     await tester.tap(find.byKey(const Key('loginButton')));
 //     await tester.pumpAndSettle();
 
 //     expect(find.text('Please enter your email'), findsOneWidget);
 //     expect(find.text('Please enter your password'), findsOneWidget);
 //   });
 
-//   testWidgets('Check successful login with correct email and password',
-//       (tester) async {
+//   testWidgets('Check successful login triggers navigation', (tester) async {
 //     const email = 'user@gmail.com';
 //     const password = 'password123';
-//     const token = 'mock_token';
 
-//     when(() => loginUsecase(any())).thenAnswer((_) async => const Right(token));
+//     when(() => loginUsecase(any()))
+//         .thenAnswer((_) async => const Right(AuthResponse(
+//               token: 'mock_token',
+//               userId: 'mock_user_id',
+//               name: 'mock_name',
+//               email: 'mock_email',
+//               role: 'mock_role',
+//             )));
 
-//     await tester.pumpWidget(MaterialApp(
-//       home: BlocProvider(
-//         create: (context) => loginBloc,
-//         child: LoginView(),
+//     await tester.pumpWidget(
+//       MaterialApp(
+//         home: BlocProvider<LoginBloc>.value(
+//           value: loginBloc,
+//           child: const LoginView(),
+//         ),
 //       ),
-//     ));
+//     );
 
 //     await tester.pumpAndSettle();
 
-//     await tester.enterText(find.byType(TextFormField).at(0), email);
-//     await tester.enterText(find.byType(TextFormField).at(1), password);
+//     await tester.enterText(find.byKey(const Key('email')), email);
+//     await tester.enterText(find.byKey(const Key('password')), password);
 
-//     await tester.tap(find.byType(ElevatedButton).first);
+//     await tester.tap(find.byKey(const Key('loginButton')));
 //     await tester.pumpAndSettle();
 
-//     expect(loginBloc.state.isSuccess, false);
+//     verify(() => loginUsecase(any())).called(1);
 //   });
 
-//   testWidgets('Invalid email/password should show snackbar error',
+//   testWidgets('Invalid email/password should show Snackbar error',
 //       (tester) async {
 //     const email = 'invalid@gmail.com';
 //     const password = 'wrongpassword';
@@ -112,32 +121,36 @@
 //       (_) async => const Left(ApiFailure(message: 'Invalid credentials')),
 //     );
 
-//     await tester.pumpWidget(MaterialApp(
-//       home: BlocProvider(
-//         create: (context) => loginBloc,
-//         child: LoginView(),
+//     await tester.pumpWidget(
+//       MaterialApp(
+//         home: BlocProvider<LoginBloc>.value(
+//           value: loginBloc,
+//           child: const LoginView(),
+//         ),
 //       ),
-//     ));
+//     );
 
 //     await tester.pumpAndSettle();
 
-//     await tester.enterText(find.byType(TextFormField).at(0), email);
-//     await tester.enterText(find.byType(TextFormField).at(1), password);
+//     await tester.enterText(find.byKey(const Key('email')), email);
+//     await tester.enterText(find.byKey(const Key('password')), password);
 
-//     await tester.tap(find.byType(ElevatedButton).first);
+//     await tester.tap(find.byKey(const Key('loginButton')));
 //     await tester.pumpAndSettle();
 
 //     expect(find.text('Invalid credentials'), findsOneWidget);
 //   });
 
-//   testWidgets('Navigate to RegisterView when SignUp button is clicked',
+//   testWidgets('Navigate to RegisterView when Sign Up button is clicked',
 //       (tester) async {
-//     await tester.pumpWidget(MaterialApp(
-//       home: BlocProvider(
-//         create: (context) => loginBloc,
-//         child: LoginView(),
+//     await tester.pumpWidget(
+//       MaterialApp(
+//         home: BlocProvider<LoginBloc>.value(
+//           value: loginBloc,
+//           child: const LoginView(),
+//         ),
 //       ),
-//     ));
+//     );
 
 //     await tester.pumpAndSettle();
 
@@ -153,6 +166,7 @@
 //   });
 
 //   tearDown(() {
+//     getIt.reset(); // Reset GetIt to clean up mocks
 //     reset(loginUsecase);
 //     reset(registerBloc);
 //   });

@@ -4,6 +4,7 @@ class ApiEndpoints {
   static const Duration connectionTimeout = Duration(seconds: 5000);
   static const Duration receiveTimeout = Duration(seconds: 5000);
   static const String baseUrl = "http://10.0.2.2:5003/";
+  static const String photoUrl = "http://10.0.2.2:5003";
 
   //For iphone
   // static const String baseUrl = "http://localhost:3000/api/v1";
@@ -28,10 +29,10 @@ class ApiEndpoints {
 
   // ✅ Cart Routes (Added)
   static const String addToCart = "cart/add";
-  static const String getCart = "cart/";
-  static const String updateCartItem = "cart/update/";
-  static const String removeCartItem = "cart/remove/";
-  static const String clearCart = "cart/clear/"; // Added clearCart endpoint
+  static const String getCart = "cart/:userId";
+  static const String updateCartItem = "cart/:userId/update";
+  static const String removeCartItem = "cart/remove/:courseId";
+  static const String clearCart = "cart/clear"; // Added clearCart endpoint
 
   // ✅ Order Routes (Added)
   static const String orderConfirm = "order/confirm";

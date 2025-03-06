@@ -202,12 +202,11 @@ Future<void> _initAuthDependencies() async {
       () => RegisterUseCase(getIt<IAuthRepository>()));
   getIt.registerLazySingleton<UploadImageUsecase>(
       () => UploadImageUsecase(getIt<IAuthRepository>()));
-  getIt.registerLazySingleton<LoginStudentUsecase>(
-    () => LoginStudentUsecase(
-      dio: getIt<Dio>(),
-      authRepository: getIt<IAuthRepository>(),
-      tokenSharedPrefs: getIt<TokenSharedPrefs>(),
-    ),
+  getIt.registerLazySingleton<LoginUseCase>(
+    () => LoginUseCase(
+        tokenSharedPrefs: getIt<TokenSharedPrefs>(),
+        repository: getIt<IAuthRepository>(),
+        userSharedPrefs: getIt<UserSharedPrefs>()),
   );
 
   // ✅ Register BLoCs
@@ -220,7 +219,7 @@ Future<void> _initAuthDependencies() async {
 
   getIt.registerFactory<LoginBloc>(
     () => LoginBloc(
-      getIt<LoginStudentUsecase>(),
+      getIt<LoginUseCase>(),
     ),
   );
 }

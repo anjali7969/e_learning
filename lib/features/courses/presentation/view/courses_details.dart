@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
-  final String courseId; // ✅ Add Course ID for API requests
+  final String courseId;
   final String title;
   final String description;
   final String imageUrl;
@@ -16,7 +16,7 @@ class CourseDetailsScreen extends StatefulWidget {
 
   const CourseDetailsScreen({
     super.key,
-    required this.courseId, // ✅ Required for Cart API
+    required this.courseId,
     required this.title,
     required this.description,
     required this.imageUrl,
@@ -33,14 +33,15 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   int _selectedRating = 0;
   VideoPlayerController? _videoController;
   bool _isVideoInitialized = false;
-  String? _userId; // ✅ Store User ID
+  String? _userId;
+  String? _token; // 🔥 Store Auth Token
 
   @override
   void initState() {
     super.initState();
     _selectedRating = widget.rating.round();
 
-    _loadUserId(); // ✅ Fetch User ID
+    _loadUserData(); // ✅ Fetch User Data
 
     if (widget.videoUrl != null && widget.videoUrl!.isNotEmpty) {
       _videoController = VideoPlayerController.network(widget.videoUrl!)
@@ -58,36 +59,50 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     super.dispose();
   }
 
-  /// **✅ Load User ID from SharedPreferences**
-  Future<void> _loadUserId() async {
+  /// **✅ Load User ID & Token from SharedPreferences**
+  Future<void> _loadUserData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final storedUserId = prefs.getString('userId');
+    final storedToken = prefs.getString('token'); // 🔥 Fetch Token
+
+    print("🟢 Stored User ID in SharedPreferences: $storedUserId");
+    print("🟢 Stored Auth Token: $storedToken");
+
     setState(() {
-      _userId = prefs.getString('userId');
+      _userId = storedUserId;
+      _token = storedToken; // ✅ Store token
     });
   }
 
-  /// **🛒 Add Course to Cart**
+  /// **🛒 Add Course to Cart with Authentication**
   Future<void> _addToCart() async {
-    if (_userId == null) {
+    if (_userId == null || _token == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text("User not logged in!"), backgroundColor: Colors.red),
+          content: Text("User not logged in! Please log in first."),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
 
     try {
       final response = await http.post(
-        Uri.parse("http://localhost:5003/cart/add"), // ✅ Update API Endpoint
-        headers: {"Content-Type": "application/json"},
+        Uri.parse("http://10.0.2.2:5003/cart/add"), // ✅ Ensure Correct API URL
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $_token" // 🔥 Include Token for Auth
+        },
         body: jsonEncode({
           "userId": _userId,
           "courseId": widget.courseId,
-          "quantity": 1, // ✅ Default quantity
+          "quantity": 1,
         }),
       );
 
-      final responseData = jsonDecode(response.body);
+      print("🟡 API Response Status: ${response.statusCode}");
+      print("🟡 API Response Body: ${response.body}");
+
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -96,12 +111,18 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
           ),
         );
       } else {
+        final responseData = jsonDecode(response.body);
         throw Exception(
             responseData['message'] ?? "Failed to add course to cart");
       }
     } catch (error) {
+      print("❌ Error adding to cart: $error");
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $error"), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text("Error: $error"),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }

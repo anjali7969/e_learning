@@ -213,37 +213,39 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String? userId, userName, userEmail, userPhone, profileImage, userToken;
   bool isLoading = true;
+  List<dynamic> userOrders = []; // ✅ Store user orders
   final picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    // _loadUserData();
+    _loadUserData();
   }
 
-  /// **🔹 Load User ID & Token from SharedPreferences**
-  // Future<void> _loadUserData() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     userId = prefs.getString('userId') ?? "";
-  //     userToken = prefs.getString('token') ?? "";
-  //   });
+  /// **✅ Load User ID & Token from SharedPreferences**
+  Future<void> _loadUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getString('userId') ?? "";
+      userToken = prefs.getString('token') ?? "";
+    });
 
-  //   if (userId!.isNotEmpty && userToken!.isNotEmpty) {
-  //     _fetchUserProfile();
-  //   } else {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //     _showSnackBar("User not logged in. Please login again.", Colors.red);
-  //   }
-  // }
+    if (userId!.isNotEmpty && userToken!.isNotEmpty) {
+      _fetchUserProfile();
+      _fetchUserOrders(); // ✅ Fetch user orders
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      _showSnackBar("User not logged in. Please login again.", Colors.red);
+    }
+  }
 
-  /// **🔹 Fetch User Profile from Backend**
+  /// **✅ Fetch User Profile**
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.get(
-        Uri.parse("http://localhost:5003/user/$userId"),
+        Uri.parse("http://10.0.2.2:5003/user/$userId"),
         headers: {"Authorization": "Bearer $userToken"},
       );
 
@@ -253,8 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           userName = data["user"]["name"] ?? "Unknown";
           userEmail = data["user"]["email"] ?? "No Email";
           userPhone = data["user"]["phone"] ?? "Not Set";
-          profileImage = data["user"]["profilePicture"] ??
-              "https://via.placeholder.com/150"; // Default placeholder
+          profileImage = data["user"]["profilePicture"];
           isLoading = false;
         });
       } else {
@@ -268,14 +269,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  /// **🔹 Update User Profile (Name & Phone)**
+  /// **✅ Fetch User Orders**
+  Future<void> _fetchUserOrders() async {
+    try {
+      final response = await http.get(
+        Uri.parse("http://10.0.2.2:5003/order/my-orders"),
+        headers: {"Authorization": "Bearer $userToken"},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          userOrders = data;
+        });
+      } else {
+        throw Exception("Failed to fetch user orders.");
+      }
+    } catch (error) {
+      print("❌ Error fetching orders: $error");
+    }
+  }
+
+  /// **✅ Update User Profile (Fixing Undefined Error)**
   Future<void> _updateUserProfile(
       String updatedName, String updatedPhone) async {
     if (userId == null || userId!.isEmpty) return;
 
     try {
       final response = await http.put(
-        Uri.parse("http://localhost:5003/user/update/$userId"),
+        Uri.parse("http://10.0.2.2:5003/user/update/$userId"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $userToken"
@@ -305,7 +327,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  /// **🔹 Upload Profile Picture**
+  /// **✅ Upload Profile Picture**
   Future<void> _uploadProfilePicture() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -314,7 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse("http://localhost:5003/user/uploadImage"),
+        Uri.parse("http://10.0.2.2:5003/user/uploadImage"),
       );
       request.headers["Authorization"] = "Bearer $userToken";
       request.files
@@ -338,7 +360,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  /// **🔹 Show Edit Dialog**
+  /// **✅ Show Edit Dialog**
   void _showEditDialog(
       String title, String fieldValue, Function(String) onSave) {
     final TextEditingController controller =
@@ -371,27 +393,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  /// **🔹 Show Snackbar**
+  /// **✅ Show Snackbar**
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: color),
     );
   }
 
-  /// **🔹 Logout Function**
+  /// **✅ Logout Function**
   Future<void> _logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // ✅ Clear user data
+    await prefs.clear();
     _showSnackBar("Logged out successfully", Colors.blue);
-
-    // Navigate to login page (Replace with your login navigation)
     Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Profile")),
+      appBar: AppBar(
+        title: const Text("Profile",
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.blue.shade800, // Changed from purple to black
+      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -403,63 +428,131 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   GestureDetector(
                     onTap: _uploadProfilePicture,
                     child: CircleAvatar(
-                      radius: 60,
-                      backgroundImage: NetworkImage(
-                          profileImage ?? "https://via.placeholder.com/150"),
+                      radius: 70,
+                      backgroundImage:
+                          profileImage != null && profileImage!.isNotEmpty
+                              ? NetworkImage(profileImage!)
+                              : const AssetImage(
+                                      "assets/images/profile-picture.jpg")
+                                  as ImageProvider,
                       backgroundColor: Colors.grey,
                     ),
                   ),
                   const SizedBox(height: 20),
 
-                  // **User Name**
-                  Text(
-                    userName ?? "User",
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
+                  // **User Info Section**
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 5,
+                            spreadRadius: 2)
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        // **User Name**
+                        ListTile(
+                          leading:
+                              const Icon(Icons.person, color: Colors.black),
+                          title: const Text("Name",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          subtitle: Text(userName ?? "Not Set",
+                              style: const TextStyle(fontSize: 14)),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.black),
+                            onPressed: () {
+                              _showEditDialog("Name", userName ?? "",
+                                  (newName) {
+                                _updateUserProfile(newName, userPhone ?? "");
+                              });
+                            },
+                          ),
+                        ),
+                        const Divider(thickness: 1),
 
-                  // **Email**
-                  Text(
-                    userEmail ?? "No Email",
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 20),
-                  const Divider(),
-
-                  // **Phone Number**
-                  ListTile(
-                    leading: const Icon(Icons.phone),
-                    title: const Text("Phone Number"),
-                    subtitle: Text(userPhone ?? "Not Set"),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        _showEditDialog("Phone Number", userPhone ?? "",
-                            (newPhone) {
-                          _updateUserProfile(userName ?? "", newPhone);
-                        });
-                      },
+                        // **Phone Number**
+                        ListTile(
+                          leading: const Icon(Icons.phone, color: Colors.black),
+                          title: const Text("Phone Number",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          subtitle: Text(userPhone ?? "Not Set",
+                              style: const TextStyle(fontSize: 14)),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.black),
+                            onPressed: () {
+                              _showEditDialog("Phone Number", userPhone ?? "",
+                                  (newPhone) {
+                                _updateUserProfile(userName ?? "", newPhone);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const Divider(),
 
-                  // **Orders & Appointments**
-                  ListTile(
-                    leading: const Icon(Icons.history),
-                    title: const Text("My Orders & Appointments"),
-                    onTap: () {
-                      // Navigate to orders screen
-                    },
-                  ),
+                  const SizedBox(height: 30),
 
-                  const SizedBox(height: 20),
+                  // **Orders Section**
+                  const Text("My Orders",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
 
-                  // **Logout Button**
-                  ElevatedButton(
-                    onPressed: _logout,
-                    child: const Text("Log Out"),
-                  ),
+                  userOrders.isEmpty
+                      ? Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 5,
+                                  spreadRadius: 2)
+                            ],
+                          ),
+                          child: const Center(
+                            child: Text("No orders placed yet.",
+                                style: TextStyle(fontSize: 14)),
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: userOrders.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 5,
+                                      spreadRadius: 2)
+                                ],
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                    "Order ID: ${userOrders[index]['_id']}",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
+                              ),
+                            );
+                          },
+                        ),
                 ],
               ),
             ),

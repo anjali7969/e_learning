@@ -6,6 +6,7 @@ import 'package:e_learning/app/shared_prefs/token_shared_prefs.dart';
 import 'package:e_learning/features/auth/data/data_source/auth_data_source.dart';
 import 'package:e_learning/features/auth/data/model/auth_api_model.dart';
 import 'package:e_learning/features/auth/domain/entity/auth_entity.dart';
+import 'package:e_learning/features/auth/domain/usecases/login_student_usecase.dart';
 
 class AuthRemoteDataSource implements IAuthDataSource {
   final Dio _dio;
@@ -35,35 +36,42 @@ class AuthRemoteDataSource implements IAuthDataSource {
 
   /// **🔹 Login User**
   @override
-  Future<String> loginUser(String email, String password) async {
+  Future<AuthResponse> loginUser(String email, String password) async {
     try {
-      var response = await _dio.post(
+      Response response = await _dio.post(
         ApiEndpoints.login,
-        data: {'email': email, 'password': password},
+        data: {
+          "email": email,
+          "password": password,
+        },
       );
 
       if (response.statusCode == 200) {
-        final token = response.data['token'];
+        print("Login API Response: ${response.data}"); // Debugging output
 
-        if (token == null || token.isEmpty) {
-          throw Exception("❌ Received empty or invalid token!");
-        }
+        final String token = response.data['token'];
+        final Map<String, dynamic> userData =
+            Map<String, dynamic>.from(response.data['user']);
 
-        // ✅ Save token after login
-        final result = await _tokenPrefs.saveToken(token);
-        result.fold(
-          (failure) => print("❌ Failed to save token: ${failure.message}"),
-          (_) => print("✅ Token saved successfully!"),
+        final String userId = userData['_id']; // Extract correct user ID
+        final String name = userData['name'];
+        final String email = userData['email'];
+        final String role = userData['role'];
+
+        return AuthResponse(
+          token: token,
+          userId: userId,
+          name: name,
+          email: email,
+          role: role,
         );
-
-        return token;
       } else {
-        throw Exception('❌ Login failed: ${response.statusMessage}');
+        throw Exception('Login failed: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      throw Exception('❌ Network error during login: ${e.message}');
+      throw Exception('Network error during login: ${e.message}');
     } catch (e) {
-      throw Exception('❌ Unexpected error: $e');
+      throw Exception('Unexpected error: $e');
     }
   }
 

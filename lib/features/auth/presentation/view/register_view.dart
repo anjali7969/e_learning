@@ -409,7 +409,8 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                       radius: 75,
                       backgroundImage: _img != null
                           ? FileImage(_img!)
-                          : const AssetImage('assets/images/profile.png')
+                          : const AssetImage(
+                                  'assets/images/profile-picture.jpg')
                               as ImageProvider,
                     ),
                     InkWell(

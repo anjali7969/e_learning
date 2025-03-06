@@ -93,7 +93,7 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  final LoginStudentUsecase loginUseCase;
+  final LoginUseCase loginUseCase;
 
   LoginBloc(this.loginUseCase) : super(const LoginInitial()) {
     // Handle navigation to the Register screen
@@ -106,7 +106,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       (event, emit) async {
         emit(const LoginLoading());
 
-        final result = await loginUseCase(LoginStudentParams(
+        final result = await loginUseCase(LoginUserParams(
           email: event.email,
           password: event.password,
         ));

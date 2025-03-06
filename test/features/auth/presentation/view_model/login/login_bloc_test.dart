@@ -4,80 +4,77 @@ import 'package:e_learning/core/error/failure.dart';
 import 'package:e_learning/features/auth/domain/usecases/login_student_usecase.dart';
 import 'package:e_learning/features/auth/presentation/view/login_view.dart';
 import 'package:e_learning/features/auth/presentation/view_model/login/login_bloc.dart';
-import 'package:e_learning/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 // Mocks
-class MockLoginUsecase extends Mock implements LoginStudentUsecase {}
-
-class MockRegisterBloc extends MockBloc<RegisterEvent, RegisterState>
-    implements RegisterBloc {}
+class MockLoginUseCase extends Mock implements LoginUseCase {}
 
 void main() {
   late LoginBloc loginBloc;
-  late MockLoginUsecase loginUsecase;
-  late RegisterBloc registerBloc;
+  late MockLoginUseCase loginUseCase;
 
   setUp(() {
-    loginUsecase = MockLoginUsecase();
-    registerBloc = MockRegisterBloc();
-    loginBloc = LoginBloc(
-      registerBloc: registerBloc,
-      loginStudentUseCase: loginUsecase,
-    );
+    loginUseCase = MockLoginUseCase();
+    loginBloc = LoginBloc(loginUseCase);
 
-    registerFallbackValue(const LoginStudentParams(email: '', password: ''));
+    registerFallbackValue(const LoginUserParams(email: '', password: ''));
   });
 
   group('LoginBloc Tests', () {
     const validEmail = 'test@gmail.com';
     const validPassword = 'password123';
     const loginParams =
-        LoginStudentParams(email: validEmail, password: validPassword);
+        LoginUserParams(email: validEmail, password: validPassword);
+    var authResponse = const AuthResponse(
+      token: 'mock_token',
+      userId: 'user_123',
+      name: 'Test User',
+      email: validEmail,
+      role: 'student',
+    );
 
     blocTest<LoginBloc, LoginState>(
-      'emits [isLoading=true, isSuccess=true] when login succeeds',
+      'emits [LoginLoading, LoginSuccess] when login succeeds',
       build: () {
-        when(() => loginUsecase.call(any()))
-            .thenAnswer((_) async => const Right(null));
+        when(() => loginUseCase.call(any()))
+            .thenAnswer((_) async => Right(authResponse));
         return loginBloc;
       },
       act: (bloc) => bloc.add(
           const LoginStudentEvent(email: validEmail, password: validPassword)),
       expect: () => [
-        LoginState.initial().copyWith(isLoading: true),
-        LoginState.initial().copyWith(isLoading: false, isSuccess: true),
+        const LoginLoading(),
+        LoginSuccess(),
       ],
       verify: (_) {
-        verify(() => loginUsecase.call(loginParams)).called(1);
+        verify(() => loginUseCase.call(loginParams)).called(1);
       },
     );
 
     blocTest<LoginBloc, LoginState>(
-      'emits [isLoading=true, isSuccess=false] when login fails',
+      'emits [LoginLoading, LoginError] when login fails',
       build: () {
-        when(() => loginUsecase.call(any())).thenAnswer((_) async =>
+        when(() => loginUseCase.call(any())).thenAnswer((_) async =>
             const Left(ApiFailure(message: 'Invalid credentials')));
         return loginBloc;
       },
       act: (bloc) => bloc.add(
           const LoginStudentEvent(email: validEmail, password: validPassword)),
       expect: () => [
-        LoginState.initial().copyWith(isLoading: true),
-        LoginState.initial().copyWith(isLoading: false, isSuccess: false),
+        const LoginLoading(),
+        const LoginError(message: 'Invalid credentials'),
       ],
       verify: (_) {
-        verify(() => loginUsecase.call(loginParams)).called(1);
+        verify(() => loginUseCase.call(loginParams)).called(1);
       },
     );
   });
 
   tearDown(() {
-    reset(loginUsecase);
-    reset(registerBloc);
+    reset(loginUseCase);
   });
 
   testWidgets('Valid Email and Password Input', (WidgetTester tester) async {

@@ -6,6 +6,7 @@ import 'package:e_learning/core/network/internet_checker.dart';
 import 'package:e_learning/features/auth/data/data_source/remote_datasource/auth_remote_datasource.dart';
 import 'package:e_learning/features/auth/domain/entity/auth_entity.dart';
 import 'package:e_learning/features/auth/domain/repository/auth_repository.dart';
+import 'package:e_learning/features/auth/domain/usecases/login_student_usecase.dart';
 
 class AuthRemoteRepository implements IAuthRepository {
   final AuthRemoteDataSource _authRemoteDatasource;
@@ -51,20 +52,14 @@ class AuthRemoteRepository implements IAuthRepository {
 
   /// **🔹 Login User**
   @override
-  Future<Either<Failure, String>> loginUser(
-      String email, String password) async {
-    if (!await _internetChecker.isConnected) {
-      return const Left(NoInternetFailure());
-    }
-
+  Future<Either<Failure, AuthResponse>> loginUser(
+      String userName, String password) async {
     try {
-      final student = await _authRemoteDatasource.loginUser(email, password);
-      return Right(student);
+      final authResponse =
+          await _authRemoteDatasource.loginUser(userName, password);
+      return Right(authResponse);
     } catch (e) {
-      return Left(ApiFailure(
-        // ✅ Positional argument
-        message: e.toString(),
-      ));
+      return Left(ApiFailure(message: e.toString()));
     }
   }
 

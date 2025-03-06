@@ -153,7 +153,7 @@ class SplashCubit extends Cubit<void> {
   /// **📌 Initialize Splash Screen & Handle Navigation**
   Future<void> init(BuildContext context) async {
     await Future.delayed(
-        const Duration(seconds: 3)); // Short delay for smooth transition
+        const Duration(seconds: 6)); // Short delay for smooth transition
     if (context.mounted) {
       _handleNavigation(context);
     }

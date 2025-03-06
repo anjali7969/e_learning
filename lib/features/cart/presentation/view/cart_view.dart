@@ -1,3 +1,599 @@
+import 'dart:convert';
+
+import 'package:e_learning/features/order/presentation/view/order_view.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+class CartPage extends StatefulWidget {
+  const CartPage({super.key});
+
+  @override
+  _CartPageState createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
+  List<dynamic> cartItems = [];
+  bool isLoading = true;
+  double totalPrice = 0.0;
+  String? _userId;
+  String? _token;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userId = prefs.getString('userId');
+      _token = prefs.getString('token');
+    });
+
+    if (_userId != null && _token != null) {
+      fetchCartItems();
+    }
+  }
+
+  Future<void> fetchCartItems() async {
+    try {
+      final response = await http.get(
+        Uri.parse("http://10.0.2.2:5003/cart/$_userId"),
+        headers: {
+          "Authorization": "Bearer $_token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        double total = 0.0;
+
+        for (var item in data['cart']['items']) {
+          total += item["price"] * item["quantity"];
+        }
+
+        setState(() {
+          cartItems = data['cart']['items'];
+          totalPrice = total;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> updateCartItem(String courseId, int quantity) async {
+    try {
+      await http.put(
+        Uri.parse("http://10.0.2.2:5003/cart/$_userId/update"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $_token"
+        },
+        body: jsonEncode({"courseId": courseId, "quantity": quantity}),
+      );
+      fetchCartItems();
+    } catch (e) {}
+  }
+
+  Future<void> removeFromCart(String courseId) async {
+    try {
+      await http.delete(
+        Uri.parse("http://10.0.2.2:5003/cart/remove/$_userId/$courseId"),
+        headers: {"Authorization": "Bearer $_token"},
+      );
+      fetchCartItems();
+    } catch (e) {}
+  }
+
+  Future<void> clearCart() async {
+    try {
+      await http.delete(
+        Uri.parse("http://10.0.2.2:5003/cart/clear/$_userId"),
+        headers: {"Authorization": "Bearer $_token"},
+      );
+      setState(() {
+        cartItems = [];
+        totalPrice = 0.0;
+      });
+    } catch (e) {}
+  }
+
+  void navigateToCheckout() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CheckoutPage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: const Text("My Cart",
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.blue.shade800,
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : cartItems.isEmpty
+              ? const Center(
+                  child: Text("Your cart is empty!",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500)))
+              : Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: cartItems.length,
+                        itemBuilder: (context, index) {
+                          final item = cartItems[index];
+                          return Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 8),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 5,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Course Image
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    "http://10.0.2.2:5003${item["image"]}",
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+
+                                // Course Details
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Title & Delete Icon
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              item["name"],
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {
+                                              removeFromCart(item["courseId"]);
+                                            },
+                                            icon: const Icon(
+                                                Icons.delete_outline,
+                                                color: Colors.red),
+                                          ),
+                                        ],
+                                      ),
+
+                                      // Description
+                                      Text(
+                                        item["description"],
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black54),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+
+                                      // Price & Quantity Controls
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "\$${item["price"]}",
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black87),
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              // color: Colors.grey[200],
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4, vertical: 0),
+                                            child: Row(
+                                              children: [
+                                                IconButton(
+                                                  icon: const Icon(
+                                                      Icons
+                                                          .remove_circle_outline,
+                                                      color: Colors.grey),
+                                                  onPressed: () {
+                                                    if (item["quantity"] > 1) {
+                                                      updateCartItem(
+                                                          item["courseId"],
+                                                          item["quantity"] - 1);
+                                                    }
+                                                  },
+                                                ),
+                                                Text(
+                                                  "${item["quantity"]}",
+                                                  style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(
+                                                      Icons.add_circle_outline,
+                                                      color: Colors.black),
+                                                  onPressed: () {
+                                                    updateCartItem(
+                                                        item["courseId"],
+                                                        item["quantity"] + 1);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    // Bottom Section
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: const [
+                          BoxShadow(color: Colors.black12, blurRadius: 5)
+                        ],
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        children: [
+                          // Order Amount
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Total Amount:",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black54)),
+                              Text("\$${totalPrice.toStringAsFixed(2)}",
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+                          // Spacer to Move Buttons Up
+                          // const SizedBox(
+                          //     height:
+                          //         10), // Adjust this value to move buttons further up
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: 150, // Set fixed width
+                                height: 60, // Set fixed height
+                                child: OutlinedButton(
+                                  onPressed: clearCart,
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(
+                                        color: Colors.black), // Black Border
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                  ),
+                                  child: const Text("Clear Cart",
+                                      style: TextStyle(color: Colors.black)),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 150, // Set fixed width
+                                height: 60, // Set fixed height
+                                child: ElevatedButton(
+                                  onPressed: navigateToCheckout,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                  ),
+                                  child: const Text("Checkout",
+                                      style: TextStyle(color: Colors.white)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+    );
+  }
+}
+
+// import 'dart:convert';
+
+// import 'package:e_learning/features/order/presentation/view/order_view.dart';
+// import 'package:flutter/material.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:shared_preferences/shared_preferences.dart';
+
+// class CartPage extends StatefulWidget {
+//   const CartPage({super.key});
+
+//   @override
+//   _CartPageState createState() => _CartPageState();
+// }
+
+// class _CartPageState extends State<CartPage> {
+//   List<dynamic> cartItems = [];
+//   bool isLoading = true;
+//   double totalPrice = 0.0;
+//   String? _userId;
+//   String? _token;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadUserData();
+//   }
+
+//   /// ✅ **Load User Data**
+//   Future<void> _loadUserData() async {
+//     final SharedPreferences prefs = await SharedPreferences.getInstance();
+//     setState(() {
+//       _userId = prefs.getString('userId');
+//       _token = prefs.getString('token');
+//     });
+
+//     if (_userId != null && _token != null) {
+//       fetchCartItems();
+//     }
+//   }
+
+//   /// ✅ **Fetch User's Cart**
+//   Future<void> fetchCartItems() async {
+//     try {
+//       final response = await http.get(
+//         Uri.parse("http://10.0.2.2:5003/cart/$_userId"),
+//         headers: {
+//           "Authorization": "Bearer $_token", // 🔥 Auth Token Required
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//         double total = 0.0;
+
+//         for (var item in data['cart']['items']) {
+//           total += item["price"] * item["quantity"];
+//         }
+
+//         setState(() {
+//           cartItems = data['cart']['items'];
+//           totalPrice = total;
+//           isLoading = false;
+//         });
+
+//         print("✅ Cart Items Loaded: $cartItems");
+//       } else {
+//         throw Exception("Failed to load cart items");
+//       }
+//     } catch (e) {
+//       print("❌ Error fetching cart items: $e");
+//       setState(() {
+//         isLoading = false;
+//       });
+//     }
+//   }
+
+//   /// ✅ **Update Quantity in Cart**
+//   Future<void> updateCartItem(String courseId, int quantity) async {
+//     try {
+//       final response = await http.put(
+//         Uri.parse("http://10.0.2.2:5003/cart/$_userId/update"),
+//         headers: {
+//           "Content-Type": "application/json",
+//           "Authorization": "Bearer $_token"
+//         },
+//         body: jsonEncode({"courseId": courseId, "quantity": quantity}),
+//       );
+
+//       if (response.statusCode == 200) {
+//         fetchCartItems();
+//       } else {
+//         throw Exception("Failed to update cart item");
+//       }
+//     } catch (e) {
+//       print("❌ Error updating item: $e");
+//     }
+//   }
+
+//   Future<void> removeFromCart(String courseId) async {
+//     try {
+//       final response = await http.delete(
+//         Uri.parse(
+//             "http://10.0.2.2:5003/cart/remove/$_userId/$courseId"), // ✅ Fixed URL
+//         headers: {"Authorization": "Bearer $_token"},
+//       );
+
+//       if (response.statusCode == 200) {
+//         fetchCartItems(); // ✅ Refresh Cart after removing
+//       } else {
+//         throw Exception("Failed to remove item from cart");
+//       }
+//     } catch (e) {
+//       print("❌ Error removing item: $e");
+//     }
+//   }
+
+//   Future<void> clearCart() async {
+//     try {
+//       final response = await http.delete(
+//         Uri.parse("http://10.0.2.2:5003/cart/clear/$_userId"), // ✅ Fixed URL
+//         headers: {"Authorization": "Bearer $_token"},
+//       );
+
+//       if (response.statusCode == 200) {
+//         setState(() {
+//           cartItems = [];
+//           totalPrice = 0.0;
+//         });
+//       } else {
+//         throw Exception("Failed to clear cart");
+//       }
+//     } catch (e) {
+//       print("❌ Error clearing cart: $e");
+//     }
+//   }
+
+//   /// ✅ **Navigate to Checkout Page**
+//   void navigateToCheckout() {
+//     Navigator.push(
+//       context,
+//       MaterialPageRoute(builder: (context) => const CheckoutPage()),
+//     );
+//   }
+
+//   /// ✅ **Build UI**
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text("My Cart")),
+//       body: isLoading
+//           ? const Center(child: CircularProgressIndicator())
+//           : cartItems.isEmpty
+//               ? const Center(child: Text("Your cart is empty!"))
+//               : Column(
+//                   children: [
+//                     Expanded(
+//                       child: ListView.builder(
+//                         itemCount: cartItems.length,
+//                         itemBuilder: (context, index) {
+//                           final item = cartItems[index];
+//                           return Card(
+//                             margin: const EdgeInsets.all(10),
+//                             child: ListTile(
+//                               leading: Image.network(
+//                                 "http://10.0.2.2:5003${item["image"]}",
+//                                 width: 50,
+//                                 height: 50,
+//                                 fit: BoxFit.cover,
+//                               ),
+//                               title: Text(item["name"]),
+//                               subtitle: Column(
+//                                 crossAxisAlignment: CrossAxisAlignment.start,
+//                                 children: [
+//                                   Text("Price: \$${item["price"]}"),
+//                                   Text("Description: ${item["description"]}"),
+//                                   Row(
+//                                     children: [
+//                                       IconButton(
+//                                         icon: const Icon(Icons.remove),
+//                                         onPressed: () {
+//                                           if (item["quantity"] > 1) {
+//                                             updateCartItem(item["courseId"],
+//                                                 item["quantity"] - 1);
+//                                           }
+//                                         },
+//                                       ),
+//                                       Text("${item["quantity"]}"),
+//                                       IconButton(
+//                                         icon: const Icon(Icons.add),
+//                                         onPressed: () {
+//                                           updateCartItem(item["courseId"],
+//                                               item["quantity"] + 1);
+//                                         },
+//                                       ),
+//                                     ],
+//                                   ),
+//                                 ],
+//                               ),
+//                               trailing: IconButton(
+//                                 icon:
+//                                     const Icon(Icons.delete, color: Colors.red),
+//                                 onPressed: () {
+//                                   removeFromCart(item["courseId"]);
+//                                 },
+//                               ),
+//                             ),
+//                           );
+//                         },
+//                       ),
+//                     ),
+//                     Container(
+//                       padding: const EdgeInsets.all(16),
+//                       decoration: const BoxDecoration(
+//                         color: Colors.white,
+//                         boxShadow: [
+//                           BoxShadow(color: Colors.black12, blurRadius: 5)
+//                         ],
+//                       ),
+//                       child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           Text("Total: \$${totalPrice.toStringAsFixed(2)}",
+//                               style: const TextStyle(
+//                                   fontSize: 20, fontWeight: FontWeight.bold)),
+//                           ElevatedButton(
+//                             onPressed: clearCart,
+//                             style: ElevatedButton.styleFrom(
+//                                 backgroundColor: Colors.red),
+//                             child: const Text("Clear Cart"),
+//                           ),
+//                           ElevatedButton(
+//                             onPressed:
+//                                 navigateToCheckout, // ✅ Navigate to Checkout
+//                             style: ElevatedButton.styleFrom(
+//                                 backgroundColor: Colors.green),
+//                             child: const Text("Checkout"),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//     );
+//   }
+// }
+
 // // import 'package:flutter/material.dart';
 
 // // class ShoppingCartScreen extends StatelessWidget {

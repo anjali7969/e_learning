@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:e_learning/features/cart/presentation/view/cart_view.dart';
+// ✅ Import CartPage
 import 'package:e_learning/features/courses/presentation/view/courses_details.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -40,7 +42,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         throw Exception("Failed to load courses");
       }
     } catch (e) {
-      print("Error fetching courses: $e");
+      print("❌ Error fetching courses: $e");
       setState(() {
         isLoading = false;
       });
@@ -61,7 +63,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
     if (imagePath == null || imagePath.trim().isEmpty) {
       return "https://via.placeholder.com/150"; // Use placeholder if empty
     }
-    return "http://10.0.2.2:5003${imagePath.trim()}";
+    return "http://10.0.2.2:5003${imagePath.trim()}"; // ✅ Fixed Image URL
   }
 
   @override
@@ -87,7 +89,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
               onPressed: () {
-                // Implement navigation for cart or wishlist
+                // ✅ Navigate to CartPage when cart icon is clicked
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const CartPage()));
               },
               icon: const Icon(Icons.shopping_cart, color: Colors.black),
             ),
@@ -142,19 +146,18 @@ class _CoursesScreenState extends State<CoursesScreen> {
   Widget _buildCourseCard(BuildContext context, dynamic course) {
     return GestureDetector(
       onTap: () {
-        // ✅ Navigate to Course Details Page with Data
+        // ✅ Navigate to Course Details Page with correct courseId
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CourseDetailsScreen(
+              courseId: course["_id"], // ✅ Pass the correct courseId
               title: course["title"],
               description: course["description"],
               imageUrl: getImageUrl(course["image"]),
               price: course["price"].toDouble(),
               rating: course["rating"]?.toDouble() ?? 0.0,
-              courseId: '', // Handle rating if null
-              // videoUrl:
-              //     course["videoUrl"] ?? '', // Handle null videoUrl gracefully
+              videoUrl: course["videoUrl"] ?? '',
             ),
           ),
         );

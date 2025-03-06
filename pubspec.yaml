@@ -58,6 +58,8 @@ dependencies:
   sensors_plus: ^6.1.1
   internet_connection_checker_plus: ^2.7.0
   video_player: ^2.9.3
+  flutter_launcher_icons: ^0.14.3
+  
   
   
   
@@ -79,6 +81,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
   json_serializable: ^6.7.1
+  mockito: ^5.4.5
   
 
 # For information on the generic Dart part of this file, see the
@@ -101,6 +104,7 @@ flutter:
       - assets/images/onboarding4.png
       - assets/images/onboarding5.png
       - assets/images/onboarding6.png
+      - assets/images/profile-picture.jpg
     # - assets/icon/facebook.png
     # - assets/icon/google.png
     # - assets/icon/microsoft.png
